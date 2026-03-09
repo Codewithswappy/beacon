@@ -720,7 +720,7 @@ export function OnboardingFlow() {
                           onChange={(e) => setBio(e.target.value.slice(0, 160))}
                           placeholder="Designer by day, builder by night..."
                           rows={3}
-                          className="w-full p-4 bg-white border-2 border-gray-50 rounded-2xl text-[14px] font-bold focus:outline-none focus:border-black transition-all resize-none shadow-xs placeholder:text-gray-100 focus:ring-0"
+                          className="w-full p-4 bg-white border-2 border-gray-50 rounded-2xl text-[14px] font-bold focus:outline-none focus:border-black transition-all resize-none shadow-xs placeholder:text-gray-200 focus:ring-0"
                         />
                       </div>
                     </div>
