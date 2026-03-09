@@ -54,7 +54,7 @@ export default async function Dashboard() {
         </section>
 
         <section className="grid sm:grid-cols-2 gap-4">
-          <div className="bg-gradient-to-br from-indigo-900/40 to-black border border-indigo-500/20 rounded-2xl p-6 hover:border-indigo-500/40 transition-colors">
+          <div className="bg-linear-to-br from-indigo-900/40 to-black border border-indigo-500/20 rounded-2xl p-6 hover:border-indigo-500/40 transition-colors">
             <h3 className="font-semibold text-lg text-indigo-300">
               Quick Actions
             </h3>
@@ -62,7 +62,7 @@ export default async function Dashboard() {
               Configure your settings or explore features.
             </p>
           </div>
-          <div className="bg-gradient-to-br from-purple-900/40 to-black border border-purple-500/20 rounded-2xl p-6 hover:border-purple-500/40 transition-colors">
+          <div className="bg-linear-to-br from-purple-900/40 to-black border border-purple-500/20 rounded-2xl p-6 hover:border-purple-500/40 transition-colors">
             <h3 className="font-semibold text-lg text-purple-300">
               Analytics Space
             </h3>
