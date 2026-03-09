@@ -17,22 +17,36 @@ export function LoginForm() {
   >(null);
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const validatePassword = (pass: string) => {
+    if (pass.length < 8) return "Password must be at least 8 characters long.";
+    if (!/[A-Z]/.test(pass))
+      return "Password must contain at least one uppercase letter.";
+    if (!/[0-9]/.test(pass))
+      return "Password must contain at least one number.";
+    if (!/[!@#$%^&*]/.test(pass))
+      return "Password must contain at least one special character (!@#$%^&*).";
+    return null;
+  };
+
   const handleOAuthLogin = async (provider: "google" | "github") => {
     setLoading(provider);
     setErrorMessage(null);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-
-    if (error) {
-      console.error(error.message);
+    setSuccessMessage(null);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+    } catch (error: any) {
+      setErrorMessage(error.message || "An unexpected error occurred.");
       setLoading(null);
     }
   };
@@ -41,19 +55,37 @@ export function LoginForm() {
     e.preventDefault();
     setLoading("credentials");
     setErrorMessage(null);
+    setSuccessMessage(null);
 
-    const { error } = isSignUp
-      ? await supabase.auth.signUp({ email, password })
-      : await supabase.auth.signInWithPassword({ email, password });
+    if (isSignUp) {
+      const passwordError = validatePassword(password);
+      if (passwordError) {
+        setErrorMessage(passwordError);
+        setLoading(null);
+        return;
+      }
+    }
 
-    if (error) {
-      setErrorMessage(error.message);
+    try {
+      const { data, error } = isSignUp
+        ? await supabase.auth.signUp({ email, password })
+        : await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) throw error;
+
+      if (isSignUp) {
+        setSuccessMessage("Account created successfully!");
+        setLoading(null);
+        // If email confirmation is off, Supabase logs them in immediately
+        if (data?.session) {
+          setTimeout(() => (window.location.href = "/"), 1500);
+        }
+      } else {
+        window.location.href = "/";
+      }
+    } catch (error: any) {
+      setErrorMessage(error.message || "Invalid login credentials.");
       setLoading(null);
-    } else if (isSignUp) {
-      setErrorMessage("Confirmation link sent to your email!");
-      setLoading(null);
-    } else {
-      window.location.href = "/";
     }
   };
 
@@ -129,16 +161,23 @@ export function LoginForm() {
             </button>
           </div>
           {errorMessage && (
-            <p
-              className={`text-[12px] mt-1 animate-in fade-in slide-in-from-top-1 duration-200 ${
-                errorMessage.includes("Confirmation")
-                  ? "text-emerald-600"
-                  : "text-orange-600 font-medium"
-              }`}
-            >
+            <p className="text-[12px] mt-1 text-orange-600 font-medium animate-in fade-in slide-in-from-top-1 duration-200">
               {errorMessage}
             </p>
           )}
+          {successMessage && (
+            <p className="text-[12px] mt-1 text-emerald-600 font-medium animate-in fade-in slide-in-from-top-1 duration-200">
+              {successMessage}
+            </p>
+          )}
+          {isSignUp &&
+            !errorMessage &&
+            !successMessage &&
+            password.length > 0 && (
+              <p className="text-[11px] mt-1 text-gray-500">
+                Min. 8 chars, 1 uppercase, 1 number, 1 special char.
+              </p>
+            )}
         </div>
 
         <div className=" border border-[#e5e7eb] rounded-[12px] p-0.5">
