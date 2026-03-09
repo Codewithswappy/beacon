@@ -13,6 +13,17 @@ export default async function Dashboard() {
     redirect("/login");
   }
 
+  // Check if onboarding is completed
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("onboarding_completed")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile?.onboarding_completed) {
+    redirect("/onboarding");
+  }
+
   return (
     <div className="min-h-screen bg-black text-white p-8 font-sans">
       <div className="max-w-4xl mx-auto space-y-8">

@@ -203,11 +203,23 @@ export function LoginForm() {
       <button
         type="button"
         onClick={() => setIsSignUp(!isSignUp)}
-        className="mt-4 text-[13px] text-gray-500 hover:text-gray-800 transition-colors"
+        className="mt-4 text-[13px] text-gray-500 "
       >
-        {isSignUp
-          ? "Already have an account? Sign In"
-          : "Don't have an account?  Create one"}
+        {isSignUp ? (
+          <>
+            Already have an account?{" "}
+            <span className="text-blue-300 hover:text-blue-400 font-semibold hover:underline cursor-pointer transition-colors">
+              Sign In
+            </span>
+          </>
+        ) : (
+          <>
+            Don&apos;t have an account?{" "}
+            <span className="text-blue-300 hover:text-blue-400 font-semibold hover:underline cursor-pointer transition-colors">
+              Create one
+            </span>
+          </>
+        )}
       </button>
 
       <div className="w-full flex items-center gap-3 my-6">
