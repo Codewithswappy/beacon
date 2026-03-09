@@ -281,10 +281,12 @@ export function OnboardingFlow() {
         <div className="absolute bottom-[10%] right-[-10%] w-[30%] h-[30%]  bg-rose-400/20 blur-[100px]" />
       </div>
 
-      <header className="fixed top-0 left-0 w-full px-10 py-8 flex justify-between items-center z-50">
+      <header className="fixed top-0 left-0 w-full px-6 md:px-12 py-6 md:py-8 flex justify-between items-center z-50">
         <div className="flex items-center gap-2">
-          <Icon3dCubeSphere size={24} className="text-black" />
-          <span className="font-bold text-xl tracking-tighter">Beacon</span>
+          <Icon3dCubeSphere size={20} className="text-black md:w-6 md:h-6" />
+          <span className="font-bold text-lg md:text-xl tracking-tighter">
+            Beacon
+          </span>
         </div>
         <div className="flex items-center gap-3">
           {userAvatar ? (
@@ -301,24 +303,24 @@ export function OnboardingFlow() {
         </div>
       </header>
 
-      <div className="flex-1 w-full max-w-4xl mx-auto px-10 flex relative z-10 pt-40 items-start">
-        {/* PROGRESS SIDEBAR: COMPACT LIQUID */}
-        <aside className="w-[160px] shrink-0 pt-2">
-          <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-8 opacity-50">
+      <div className="flex-1 w-full max-w-5xl mx-auto px-6 md:px-10 flex flex-col md:flex-row relative z-10 pt-28 md:pt-40 items-start md:gap-20">
+        {/* PROGRESS SIDEBAR: RESPONSIVE LIQUID */}
+        <aside className="w-full md:w-[160px] shrink-0 mb-12 md:mb-0 pt-2">
+          <p className="hidden md:block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-8 opacity-50">
             OnBoarding
           </p>
-          <nav className="space-y-0 relative">
+          <nav className="flex md:flex-col justify-center md:justify-start items-center md:items-start relative">
             {STEPS.map((step, idx) => {
               const isActive = currentStep === step.id;
               const isCompleted = currentStep > step.id;
               return (
                 <div
                   key={step.id}
-                  className="relative flex items-center gap-4 pb-8 last:pb-0"
+                  className="relative flex flex-col md:flex-row items-center gap-2 md:gap-4 md:pb-8 last:pb-0 flex-1 md:flex-none"
                 >
                   {/* Connecting Line with Liquid Pulse */}
                   {idx !== STEPS.length - 1 && (
-                    <div className="absolute left-[9.5px] top-6 bottom-0 w-[1px] bg-gray-50 overflow-hidden">
+                    <div className="absolute left-1/2 md:left-[9.5px] top-2.5 md:top-6 w-[calc(100%-20px)] md:w-[1px] h-[1px] md:h-full bg-gray-50 overflow-hidden -translate-y-1/2 md:translate-y-0 translate-x-[15px] md:translate-x-0">
                       <motion.div
                         initial={false}
                         animate={{
@@ -331,14 +333,22 @@ export function OnboardingFlow() {
                         {/* Kinetic Pulse traveling down */}
                         {isActive && (
                           <motion.div
-                            initial={{ top: "-20%" }}
-                            animate={{ top: "120%" }}
+                            initial={{
+                              [idx > 0 && currentStep === step.id
+                                ? "left"
+                                : "top"]: "-20%",
+                            }}
+                            animate={{
+                              [idx > 0 && currentStep === step.id
+                                ? "left"
+                                : "top"]: "120%",
+                            }}
                             transition={{
                               duration: 2,
                               repeat: Infinity,
                               ease: "linear",
                             }}
-                            className="absolute left-0 w-full h-1/4 bg-linear-to-b from-transparent via-black to-transparent opacity-20"
+                            className="absolute left-0 top-0 w-full h-full bg-linear-to-r md:bg-linear-to-b from-transparent via-black/20 to-transparent"
                           />
                         )}
                       </motion.div>
@@ -436,10 +446,10 @@ export function OnboardingFlow() {
                     <motion.span
                       animate={{
                         opacity: isActive || isCompleted ? 1 : 0.3,
-                        x: isActive ? 6 : 0,
+                        x: isActive ? (window.innerWidth < 768 ? 0 : 6) : 0,
                         scale: isActive ? 1.05 : 1,
                       }}
-                      className={`text-[12px] font-bold transition-all origin-left ${isActive ? "text-black" : "text-gray-300"}`}
+                      className={`text-[10px] md:text-[12px] font-bold transition-all origin-left text-center md:text-left ${isActive ? "text-black" : "text-gray-300"}`}
                     >
                       {step.title}
                     </motion.span>
@@ -447,9 +457,8 @@ export function OnboardingFlow() {
                       animate={{
                         opacity: isActive ? 1 : 0,
                         height: isActive ? "auto" : 0,
-                        y: isActive ? 0 : -5,
                       }}
-                      className="text-[9px] font-semibold text-gray-400 overflow-hidden"
+                      className="hidden md:block text-[9px] font-semibold text-gray-400 overflow-hidden"
                     >
                       {step.sub}
                     </motion.span>
@@ -460,9 +469,8 @@ export function OnboardingFlow() {
           </nav>
         </aside>
 
-        {/* CONTENT AREA: TRULY COMPACT */}
-        <main className="flex-1 flex justify-center perspective-[1000px]">
-          <div className="w-full max-w-[400px] relative">
+        <main className="flex-1 flex justify-center perspective-[1000px] w-full">
+          <div className="w-full max-w-[400px] md:max-w-[440px] relative px-1 md:px-0">
             <AnimatePresence>{showSpark && <SparkBlast />}</AnimatePresence>
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
