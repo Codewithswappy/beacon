@@ -17,16 +17,16 @@ export default function LoginPage() {
         <div className="absolute bottom-[-15%] left-[-40%] w-[50%] h-[50%] bg-cyan-50 blur-[120px]" />
       </div>
 
-      <div className="relative flex w-[400px] h-fit">
+      <div className="relative flex w-[370px] md:w-[400px] h-fit">
         {/* Horizontal line extensions & top/bottom border */}
-        <div className="absolute -left-12 -right-12 top-0 border-t border-dashed border-[#d1d5db] mask-[linear-gradient(to_right,transparent,black_48px,black_calc(100%-48px),transparent)]" />
+        <div className="absolute  -left-12 -right-12 top-0 border-t border-dashed border-[#d1d5db] mask-[linear-gradient(to_right,transparent,black_48px,black_calc(100%-48px),transparent)]" />
         <div className="absolute -left-12 -right-12 bottom-0 border-t border-dashed border-[#d1d5db] mask-[linear-gradient(to_right,transparent,black_48px,black_calc(100%-48px),transparent)]" />
 
         {/* Vertical line extensions & left/right border */}
         <div className="absolute left-0 -top-12 -bottom-12 border-l border-dashed border-[#d1d5db] mask-[linear-gradient(to_bottom,transparent,black_48px,black_calc(100%-48px),transparent)]" />
         <div className="absolute right-0 -top-12 -bottom-12 border-l border-dashed border-[#d1d5db] mask-[linear-gradient(to_bottom,transparent,black_48px,black_calc(100%-48px),transparent)]" />
 
-        <div className="relative w-full p-6 z-10 box-border">
+        <div className="relative w-full p-8 z-10 box-border">
           <LoginForm />
         </div>
       </div>
