@@ -713,7 +713,7 @@ export function OnboardingFlow() {
                       {/* Bio Area */}
                       <div className="space-y-3 pt-2">
                         <div className="flex items-center justify-between px-1">
-                          <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                          <label className="text-[10px] font-semibold text-gray-400  tracking-[0.2em]">
                             Bio & Identity
                           </label>
                           <span className="text-[10px] font-bold text-gray-300">
@@ -725,7 +725,7 @@ export function OnboardingFlow() {
                           onChange={(e) => setBio(e.target.value.slice(0, 160))}
                           placeholder="Designer by day, builder by night..."
                           rows={3}
-                          className="w-full p-4 bg-white border-2 border-gray-50 rounded-2xl text-[14px] font-bold focus:outline-none focus:border-black transition-all resize-none shadow-xs placeholder:text-gray-200 focus:ring-0"
+                          className="w-full p-4 bg-white border-3  border-gray-100  rounded-[10px] text-[14px] font-normal focus:outline-none focus:border-gray-200 transition-all resize-none shadow-xs placeholder:text-gray-300 focus:ring-0"
                         />
                       </div>
                     </div>
