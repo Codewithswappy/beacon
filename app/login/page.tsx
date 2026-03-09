@@ -11,7 +11,7 @@ export default function LoginPage() {
     <div className="min-h-screen relative bg-[#f5f5f5] flex items-center justify-center font-sans overflow-hidden">
       {/* Background warm glowing orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-15%] left-[-50%] w-[50%] h-[50%] bg-orange-200 blur-[120px]" />
+        <div className="hidden md:block absolute top-[-15%] left-[-50%] w-[50%] h-[50%] bg-orange-200 blur-[120px]" />
         <div className="absolute top-[60%] left-[80%] w-[40%] h-[40%] bg-rose-100 blur-[120px]" />
         <div className="absolute top-[0%] left-full w-[30%] h-[30%] bg-amber-200 blur-[120px]" />
         <div className="absolute bottom-[-15%] left-[-40%] w-[50%] h-[50%] bg-cyan-50 blur-[120px]" />
