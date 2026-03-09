@@ -446,7 +446,12 @@ export function OnboardingFlow() {
                     <motion.span
                       animate={{
                         opacity: isActive || isCompleted ? 1 : 0.3,
-                        x: isActive ? (window.innerWidth < 768 ? 0 : 6) : 0,
+                        x: isActive
+                          ? typeof window !== "undefined" &&
+                            window.innerWidth < 768
+                            ? 0
+                            : 6
+                          : 0,
                         scale: isActive ? 1.05 : 1,
                       }}
                       className={`text-[10px] md:text-[12px] font-bold transition-all origin-left text-center md:text-left ${isActive ? "text-black" : "text-gray-300"}`}
@@ -693,7 +698,7 @@ export function OnboardingFlow() {
                             <motion.div
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
-                              className="h-full flex items-center justify-center border-2 border-dashed border-gray-100 rounded-2xl py-8 group hover:border-gray-200 transition-colors cursor-pointer focus:outline-none focus:ring-0"
+                              className="h-full flex items-center justify-center border-2 border-dashed border-gray-200 rounded-2xl py-8 group hover:border-gray-300 transition-colors cursor-pointer focus:outline-none focus:ring-0"
                               onClick={() => setActiveSocial("twitter")}
                             >
                               <p className="text-[12px] font-bold text-gray-300 group-hover:text-gray-400 transition-colors flex items-center gap-2">
