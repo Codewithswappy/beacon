@@ -7,17 +7,27 @@ import {
   IconLogout,
   IconUserPlus,
   IconSwitchHorizontal,
+  IconSun,
+  IconMoon,
+  IconDeviceDesktop,
 } from "@tabler/icons-react";
 import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 
 export function ProfileDropdown() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [themeMounted, setThemeMounted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const supabase = createClient();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+
+  useEffect(() => {
+    setThemeMounted(true);
+  }, []);
 
   useEffect(() => {
     async function loadUser() {
@@ -134,6 +144,39 @@ export function ProfileDropdown() {
               <span>Switch Account</span>
             </motion.button>
             
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-px bg-gray-100 dark:bg-gray-800/80 my-1 mx-2" />
+            
+            {/* Theme Toggle */}
+            <motion.button 
+              initial={{ opacity: 0, x: -10, filter: "blur(4px)" }} animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+              whileHover={{ scale: 1.02, x: 2 }} whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                if (theme === "light") setTheme("dark");
+                else if (theme === "dark") setTheme("system");
+                else setTheme("light");
+              }}
+              className="flex items-center gap-2.5 px-2.5 py-1.5 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/10 rounded-2xl transition-colors cursor-pointer text-left focus:outline-none"
+            >
+              <div className="flex items-center justify-center w-7 h-7 rounded-full bg-gray-100 dark:bg-white/10 text-gray-500 dark:text-gray-400 relative overflow-hidden">
+                <AnimatePresence mode="wait" initial={false}>
+                  {themeMounted && theme === "dark" ? (
+                    <motion.div key="moon" initial={{ y: 12, rotate: 90, opacity: 0 }} animate={{ y: 0, rotate: 0, opacity: 1 }} exit={{ y: -12, rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                      <IconMoon size={14} stroke={2.5} />
+                    </motion.div>
+                  ) : themeMounted && theme === "light" ? (
+                    <motion.div key="sun" initial={{ y: 12, rotate: -90, opacity: 0 }} animate={{ y: 0, rotate: 0, opacity: 1 }} exit={{ y: -12, rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                      <IconSun size={14} stroke={2.5} />
+                    </motion.div>
+                  ) : (
+                    <motion.div key="system" initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -12, opacity: 0 }} transition={{ duration: 0.2 }}>
+                      <IconDeviceDesktop size={14} stroke={2.5} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+              <span>{themeMounted ? (theme === "dark" ? "Dark Mode" : theme === "light" ? "Light Mode" : "System") : "Theme"}</span>
+            </motion.button>
+
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-px bg-gray-100 dark:bg-gray-800/80 my-1 mx-2" />
             
             <motion.button 

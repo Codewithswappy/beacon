@@ -38,8 +38,8 @@ const SKILL_OPTIONS = [
 ];
 
 const SOCIALS = [
-  { id: "twitter", icon: IconBrandX, label: "Twitter", color: "#000" },
-  { id: "github", icon: IconBrandGithub, label: "GitHub", color: "#333" },
+  { id: "twitter", icon: IconBrandX, label: "Twitter", color: "var(--foreground)" },
+  { id: "github", icon: IconBrandGithub, label: "GitHub", color: "var(--foreground)" },
   {
     id: "linkedin",
     icon: IconBrandLinkedin,
@@ -266,31 +266,31 @@ export function OnboardingFlow() {
             opacity: [1, 1, 0],
           }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="absolute w-1 h-1 bg-black rounded-full"
+          className="absolute w-1 h-1 bg-black dark:bg-white rounded-full"
         />
       ))}
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-white font-sans text-gray-900 select-none overflow-hidden flex flex-col tracking-tight [WebkitTapHighlightColor:transparent]">
+    <div className="min-h-screen bg-white dark:bg-background font-sans text-gray-900 dark:text-foreground select-none overflow-hidden flex flex-col tracking-tight [WebkitTapHighlightColor:transparent] transition-colors duration-300">
       {/* Warm Gradient Spots */}
       <div className="fixed inset-0 z-10 overflow-hidden pointer-events-none">
-        <div className="absolute top-[20%] left-[-10%] w-[30%] h-[20%]  bg-amber-300/20 blur-[100px]" />
-        <div className="absolute bottom-[20%] left-[-10%] w-[30%] h-[30%]  bg-cyan-400/20 blur-[100px]" />
-        <div className="absolute bottom-[10%] right-[-10%] w-[30%] h-[30%]  bg-rose-400/20 blur-[100px]" />
+        <div className="absolute top-[20%] left-[-10%] w-[30%] h-[20%]  bg-amber-300/20 dark:bg-amber-800/10 blur-[100px]" />
+        <div className="absolute bottom-[20%] left-[-10%] w-[30%] h-[30%]  bg-cyan-400/20 dark:bg-cyan-800/10 blur-[100px]" />
+        <div className="absolute bottom-[10%] right-[-10%] w-[30%] h-[30%]  bg-rose-400/20 dark:bg-rose-800/10 blur-[100px]" />
       </div>
 
       <header className="fixed top-0 left-0 w-full px-6 md:px-12 py-6 md:py-8 flex justify-between items-center z-50">
         <div className="flex items-center gap-2">
-          <Icon3dCubeSphere size={20} className="text-black md:w-6 md:h-6" />
+          <Icon3dCubeSphere size={20} className="text-black dark:text-white md:w-6 md:h-6" />
           <span className="font-bold text-lg md:text-xl tracking-tighter">
             Beacon
           </span>
         </div>
         <div className="flex items-center gap-3">
           {userAvatar ? (
-            <div className="w-12 h-12 rounded-full border-2 border-gray-200 shadow-sm shadow-black/10 ring-1 ring-black/10 overflow-hidden bg-gray-50">
+            <div className="w-12 h-12 rounded-full border-2 border-gray-200 dark:border-border shadow-sm shadow-black/10 ring-1 ring-black/10 dark:ring-white/10 overflow-hidden bg-gray-50 dark:bg-surface">
               <img
                 src={userAvatar}
                 alt="Profile"
@@ -298,7 +298,7 @@ export function OnboardingFlow() {
               />
             </div>
           ) : (
-            <div className="w-8 h-8 rounded-full bg-gray-50 border border-gray-100 shadow-sm" />
+            <div className="w-8 h-8 rounded-full bg-gray-50 dark:bg-surface border border-gray-100 dark:border-border shadow-sm" />
           )}
         </div>
       </header>
@@ -359,12 +359,12 @@ export function OnboardingFlow() {
                   <div className="relative z-10">
                     <motion.div
                       animate={{
-                        backgroundColor: isCompleted ? "#10b981" : "#fff",
+                        backgroundColor: isCompleted ? "#10b981" : "var(--background)",
                         borderColor: isCompleted
                           ? "#10b981"
                           : isActive
-                            ? "#000"
-                            : "#eee",
+                            ? "var(--foreground)"
+                            : "var(--border)",
                         scale: isActive ? 1.2 : 1,
                         rotate: isCompleted ? 360 : 0,
                         boxShadow: isCompleted
@@ -384,7 +384,7 @@ export function OnboardingFlow() {
                           {[0, 1].map((i) => (
                             <motion.div
                               key={i}
-                              className="absolute inset-0 rounded-full border border-black/10 will-change-transform"
+                              className="absolute inset-0 rounded-full border border-foreground/10 will-change-transform"
                               animate={{
                                 scale: [1, 2.5],
                                 opacity: [0.4, 0],
@@ -430,7 +430,7 @@ export function OnboardingFlow() {
                               repeat: Infinity,
                               ease: "easeInOut",
                             }}
-                            className="w-1.5 h-1.5 bg-black rounded-full"
+                            className="w-1.5 h-1.5 bg-foreground rounded-full"
                           />
                         ) : (
                           <motion.span key="num" className="text-gray-300">
@@ -454,7 +454,7 @@ export function OnboardingFlow() {
                           : 0,
                         scale: isActive ? 1.05 : 1,
                       }}
-                      className={`text-[10px] md:text-[12px] font-bold transition-all origin-left text-center md:text-left ${isActive ? "text-black" : "text-gray-300"}`}
+                      className={`text-[10px] md:text-[12px] font-bold transition-all origin-left text-center md:text-left ${isActive ? "text-foreground" : "text-gray-300 dark:text-gray-600"}`}
                     >
                       {step.title}
                     </motion.span>
@@ -490,7 +490,7 @@ export function OnboardingFlow() {
                 {currentStep === 1 && (
                   <div className="space-y-8">
                     <div className="space-y-2">
-                      <h1 className="text-[28px] font-black leading-tight tracking-tight text-gray-900">
+                      <h1 className="text-[28px] font-black leading-tight tracking-tight text-foreground">
                         Choose your handle.
                       </h1>
                       <p className="text-[14px] font-medium text-gray-400">
@@ -514,12 +514,12 @@ export function OnboardingFlow() {
                             )
                           }
                           placeholder="handle"
-                          className={`w-full pl-8 pr-12 py-3 bg-white border rounded-xl text-base font-bold transition-all focus:outline-none focus:ring-0 ${
+                          className={`w-full pl-8 pr-12 py-3 bg-white dark:bg-surface border rounded-xl text-base font-bold transition-all focus:outline-none focus:ring-0 ${
                             usernameStatus === "taken"
                               ? "border-red-100 focus:border-red-400"
                               : usernameStatus === "available"
                                 ? "border-green-100 focus:border-green-400"
-                                : "border-gray-50 focus:border-black"
+                                : "border-gray-50 dark:border-border focus:border-foreground"
                           }`}
                         />
                         <div className="absolute right-4 top-1/2 -translate-y-1/2">
@@ -561,7 +561,7 @@ export function OnboardingFlow() {
                 {currentStep === 2 && (
                   <div className="space-y-8">
                     <div className="space-y-2">
-                      <h1 className="text-[28px] font-black leading-tight tracking-tight text-gray-900">
+                      <h1 className="text-[28px] font-black leading-tight tracking-tight text-foreground">
                         What's your craft?
                       </h1>
                       <p className="text-[14px] font-medium text-gray-400">
@@ -573,7 +573,7 @@ export function OnboardingFlow() {
                         <button
                           key={skill}
                           onClick={() => toggleSkill(skill)}
-                          className={`px-4 py-2 rounded-lg text-[12px] font-bold transition-all border focus:outline-none focus:ring-0 ${selectedSkills.includes(skill) ? "bg-black text-white border-black" : "bg-white text-gray-500 border-gray-100 hover:border-gray-900"}`}
+                          className={`px-4 py-2 rounded-lg text-[12px] font-bold transition-all border focus:outline-none focus:ring-0 ${selectedSkills.includes(skill) ? "bg-foreground text-background border-foreground" : "bg-white dark:bg-surface text-gray-500 dark:text-muted border-gray-100 dark:border-border hover:border-foreground"}`}
                         >
                           {skill}
                         </button>
@@ -585,7 +585,7 @@ export function OnboardingFlow() {
                 {currentStep === 3 && (
                   <div className="space-y-8">
                     <div className="space-y-2">
-                      <h1 className="text-[28px] font-black leading-tight tracking-tight text-gray-900">
+                      <h1 className="text-[28px] font-black leading-tight tracking-tight text-foreground">
                         Final touches.
                       </h1>
                       <p className="text-[14px] font-medium text-gray-400">
@@ -604,15 +604,15 @@ export function OnboardingFlow() {
                             onClick={() => setActiveSocial(soc.id)}
                             className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all border-2 ${
                               activeSocial === soc.id
-                                ? "border-black bg-black text-white shadow-lg shadow-black/10"
-                                : "border-gray-50 bg-white text-gray-400 hover:border-gray-200"
+                                ? "border-foreground bg-foreground text-background shadow-lg shadow-black/10 dark:shadow-white/5"
+                                : "border-gray-50 dark:border-border bg-white dark:bg-surface text-gray-400 dark:text-muted hover:border-gray-200 dark:hover:border-foreground"
                             } relative`}
                           >
                             <soc.icon
                               size={22}
                               color={
                                 activeSocial === soc.id
-                                  ? "#fff"
+                                  ? "currentColor"
                                   : socialLinks[soc.id]
                                     ? soc.color
                                     : "currentColor"
@@ -622,7 +622,7 @@ export function OnboardingFlow() {
                               <motion.div
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
-                                className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white"
+                                className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white dark:border-background"
                               />
                             )}
                           </motion.button>
@@ -667,13 +667,13 @@ export function OnboardingFlow() {
                                       ? "@handle"
                                       : `Your ${activeSocial} handle...`
                                 }
-                                className={`w-full pl-11 pr-16 py-3 bg-gray-50/50 border-2 rounded-xl text-sm font-bold transition-all placeholder:text-gray-200 focus:outline-none focus:ring-0 ${
+                                className={`w-full pl-11 pr-16 py-3 bg-gray-50/50 dark:bg-surface border-2 rounded-xl text-sm font-bold transition-all placeholder:text-gray-200 dark:placeholder:text-muted focus:outline-none focus:ring-0 ${
                                   !validateSocial(
                                     activeSocial,
                                     socialLinks[activeSocial],
                                   )
                                     ? "border-red-100 focus:border-red-400"
-                                    : "border-transparent focus:border-black"
+                                    : "border-transparent focus:border-foreground"
                                 }`}
                               />
                               {!validateSocial(
@@ -689,7 +689,7 @@ export function OnboardingFlow() {
                               )}
                               <button
                                 onClick={() => setActiveSocial(null)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-400 hover:text-black uppercase tracking-tight focus:outline-none focus:ring-0"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-400 hover:text-black dark:hover:text-white uppercase tracking-tight focus:outline-none focus:ring-0"
                               >
                                 Done
                               </button>
@@ -698,10 +698,10 @@ export function OnboardingFlow() {
                             <motion.div
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
-                              className="h-full flex items-center justify-center border-2 border-dashed border-gray-200 rounded-2xl py-8 group hover:border-gray-300 transition-colors cursor-pointer focus:outline-none focus:ring-0"
+                              className="h-full flex items-center justify-center border-2 border-dashed border-gray-200 dark:border-border rounded-2xl py-8 group hover:border-gray-300 dark:hover:border-muted transition-colors cursor-pointer focus:outline-none focus:ring-0"
                               onClick={() => setActiveSocial("twitter")}
                             >
-                              <p className="text-[12px] font-bold text-gray-300 group-hover:text-gray-400 transition-colors flex items-center gap-2">
+                              <p className="text-[12px] font-bold text-gray-400/50 dark:text-muted/50 group-hover:text-gray-600 dark:group-hover:text-muted transition-colors flex items-center gap-2">
                                 <span>Connect your presence</span>
                                 <IconArrowRight size={12} />
                               </p>
@@ -725,7 +725,7 @@ export function OnboardingFlow() {
                           onChange={(e) => setBio(e.target.value.slice(0, 160))}
                           placeholder="Designer by day, builder by night..."
                           rows={3}
-                          className="w-full p-4 bg-white border-3  border-gray-100  rounded-[10px] text-[14px] font-normal focus:outline-none focus:border-gray-200 transition-all resize-none shadow-xs placeholder:text-gray-300 focus:ring-0"
+                          className="w-full p-4 bg-white dark:bg-surface border-3 border-gray-100 dark:border-border rounded-[10px] text-[14px] font-normal focus:outline-none focus:border-gray-200 dark:focus:border-foreground transition-all resize-none shadow-xs placeholder:text-gray-300 dark:placeholder:text-muted focus:ring-0"
                         />
                       </div>
                     </div>
@@ -736,7 +736,7 @@ export function OnboardingFlow() {
                   {currentStep > 1 && (
                     <button
                       onClick={handleBack}
-                      className="w-10 h-10 rounded-lg border border-gray-50 flex items-center justify-center hover:bg-gray-50 transition-all text-gray-400 hover:text-black cursor-pointer shadow-xs focus:outline-none focus:ring-0"
+                      className="w-10 h-10 rounded-lg border border-gray-50 dark:border-border flex items-center justify-center hover:bg-gray-50 dark:hover:bg-surface-hover transition-all text-gray-400 hover:text-foreground cursor-pointer shadow-xs focus:outline-none focus:ring-0"
                     >
                       <IconArrowLeft size={16} stroke={4} />
                     </button>
@@ -755,7 +755,7 @@ export function OnboardingFlow() {
                           validateSocial(id, val),
                         ))
                     }
-                    className="flex-1 bg-black text-white h-10 rounded-lg text-xs font-bold flex items-center justify-center gap-2 hover:outline-2 hover:outline-gray-200 transition-all disabled:opacity-20 cursor-pointer shadow-lg shadow-black/5 focus:outline-none focus:ring-0"
+                    className="flex-1 bg-foreground text-background h-10 rounded-lg text-xs font-bold flex items-center justify-center gap-2 hover:outline-2 hover:outline-gray-200 dark:hover:outline-gray-700 transition-all disabled:opacity-20 cursor-pointer shadow-lg shadow-black/5 focus:outline-none focus:ring-0"
                   >
                     {loading ? (
                       <IconLoader2 className="animate-spin" size={14} />
@@ -770,7 +770,7 @@ export function OnboardingFlow() {
                   </motion.button>
                   <button
                     onClick={() => saveProfile(true)}
-                    className="text-[11px] font-black text-gray-400 hover:text-black px-2 transition-all focus:outline-none focus:ring-0"
+                    className="text-[11px] font-black text-gray-400 hover:text-foreground px-2 transition-all focus:outline-none focus:ring-0"
                   >
                     <span className="flex items-center justify-center gap-2">
                       Skip

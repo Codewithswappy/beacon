@@ -93,8 +93,8 @@ export function LoginForm() {
     <div className="w-full flex flex-col items-center">
       {/* Logo Container */}
       <div className="flex items-center gap-2 mb-10 w-full justify-center">
-        <Icon3dCubeSphere size={28} color="black"/>
-        <span className="text-[22px] font-bold tracking-tight text-gray-900">
+        <Icon3dCubeSphere size={28} className="text-black dark:text-white"/>
+        <span className="text-[22px] font-bold tracking-tight text-gray-900 dark:text-gray-100">
           Beacon
         </span>
       </div>
@@ -119,19 +119,19 @@ export function LoginForm() {
 
       <form onSubmit={handleCredentials} className="w-full space-y-4">
         <div className="space-y-1.5">
-          <label className="text-[13px] font-medium text-gray-700">Email</label>
+          <label className="text-[13px] font-medium text-gray-700 dark:text-gray-300">Email</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             required
-            className="w-full px-3 py-2.5 bg-white border border-[#e5e7eb] rounded-[8px] text-[14px] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-transparent transition-all shadow-sm"
+            className="w-full px-3 py-2.5 bg-white dark:bg-white/5 border border-[#e5e7eb] dark:border-[#333] rounded-[8px] text-[14px] text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-400 focus:border-transparent transition-all shadow-sm"
           />
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-[13px] font-medium text-gray-700">
+          <label className="text-[13px] font-medium text-gray-700 dark:text-gray-300">
             Password
           </label>
           <div className="relative">
@@ -141,16 +141,16 @@ export function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="• • • • • • •"
               required
-              className={`w-full pl-3 pr-10 py-2.5 bg-white border rounded-[8px] text-[14px] text-gray-900 placeholder-gray-400 focus:outline-none transition-all shadow-sm ${
+              className={`w-full pl-3 pr-10 py-2.5 bg-white dark:bg-white/5 border rounded-[8px] text-[14px] text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none transition-all shadow-sm ${
                 errorMessage && !errorMessage.includes("Confirmation")
                   ? "border-orange-500 animate-shake"
-                  : "border-[#e5e7eb] focus:ring-2 focus:ring-gray-300 focus:border-transparent"
+                  : "border-[#e5e7eb] dark:border-[#333] focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-700 focus:border-transparent"
               }`}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? (
@@ -180,11 +180,11 @@ export function LoginForm() {
             )}
         </div>
 
-        <div className=" border border-[#e5e7eb] rounded-[12px] p-0.5">
+        <div className="border border-[#e5e7eb] dark:border-[#333] rounded-[12px] p-0.5">
           <button
             type="submit"
             disabled={loading !== null}
-            className="w-full py-[11px] px-4 bg-linear-to-b from-[#2e2e2e] to-[#121212] text-white rounded-[10px] text-[14px] font-bold cursor-pointer tracking-wide shadow-[0_2px_4px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] border border-[#1e1e1e] hover:from-[#2a2a2a] hover:to-[#090909] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full py-[11px] px-4 bg-linear-to-b from-[#2e2e2e] to-[#121212] dark:from-white dark:to-gray-200 text-white dark:text-black rounded-[10px] text-[14px] font-bold cursor-pointer tracking-wide shadow-[0_2px_4px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] dark:shadow-[0_2px_4px_rgba(255,255,255,0.1)] border border-[#1e1e1e] dark:border-gray-300 hover:from-[#2a2a2a] hover:to-[#090909] dark:hover:from-gray-100 dark:hover:to-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black dark:focus:ring-white transition-all disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {loading === "credentials" ? (
               <div className="flex items-center justify-center gap-2">
@@ -208,14 +208,14 @@ export function LoginForm() {
         {isSignUp ? (
           <>
             Already have an account?{" "}
-            <span className="text-blue-300 hover:text-blue-400 font-semibold hover:underline cursor-pointer transition-colors">
+            <span className="text-blue-400 hover:text-blue-500 dark:text-blue-300 dark:hover:text-blue-400 font-semibold hover:underline cursor-pointer transition-colors">
               Sign In
             </span>
           </>
         ) : (
           <>
             Don&apos;t have an account?{" "}
-            <span className="text-blue-300 hover:text-blue-400 font-semibold hover:underline cursor-pointer transition-colors">
+            <span className="text-blue-400 hover:text-blue-500 dark:text-blue-300 dark:hover:text-blue-400 font-semibold hover:underline cursor-pointer transition-colors">
               Create one
             </span>
           </>
@@ -223,11 +223,11 @@ export function LoginForm() {
       </button>
 
       <div className="w-full flex items-center gap-3 my-6">
-        <div className="h-px bg-gray-200 flex-1"></div>
+        <div className="h-px bg-gray-200 dark:bg-gray-800 flex-1"></div>
         <span className="text-[11px] text-gray-400 font-medium uppercase tracking-wider">
           or continue with
         </span>
-        <div className="h-px bg-gray-200 flex-1"></div>
+        <div className="h-px bg-gray-200 dark:bg-gray-800 flex-1"></div>
       </div>
 
       <div className="w-full grid grid-cols-2 gap-3">
@@ -235,7 +235,7 @@ export function LoginForm() {
           type="button"
           onClick={() => handleOAuthLogin("google")}
           disabled={loading !== null}
-          className="group w-full flex items-center justify-center gap-2.5 px-3 py-2.5 bg-linear-to-b from-white to-[#f9fafb] border-2 border-[#e5e7eb] rounded-[8px] shadow-sm shadow-black/10 text-[13px] font-semibold text-gray-700 hover:border-gray-300 hover:bg-gray-50 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-black/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="group w-full flex items-center justify-center gap-2.5 px-3 py-2.5 bg-linear-to-b from-white to-[#f9fafb] dark:from-white/5 dark:to-white/[0.02] border-2 border-[#e5e7eb] dark:border-[#333] rounded-[8px] shadow-sm shadow-black/10 text-[13px] font-semibold text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-white/10 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-black/10 dark:focus:ring-white/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           {loading === "google" ? (
             <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
@@ -266,12 +266,12 @@ export function LoginForm() {
           type="button"
           onClick={() => handleOAuthLogin("github")}
           disabled={loading !== null}
-          className="group w-full flex items-center justify-center gap-2.5 px-3 py-2.5 bg-linear-to-b from-[#1f1f1f] to-black border-2 border-[#e5e7eb] hover:border-gray-300 rounded-[8px] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)]shadow-black/10 text-[13px] font-semibold text-white hover:from-black hover:to-black hover:bg-gray-50 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-black/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="group w-full flex items-center justify-center gap-2.5 px-3 py-2.5 bg-linear-to-b from-[#1f1f1f] to-black dark:from-white dark:to-gray-200 border-2 border-[#e5e7eb] dark:border-[#333] hover:border-gray-300 dark:hover:border-gray-500 rounded-[8px] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] text-[13px] font-semibold text-white dark:text-black hover:from-black hover:to-black dark:hover:from-gray-100 dark:hover:to-white active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-black/10 dark:focus:ring-white/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           {loading === "github" ? (
             <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
           ) : (
-            <IconBrandGithub className="w-4 h-4 text-white" />
+            <IconBrandGithub className="w-4 h-4 text-white dark:text-black" />
           )}
           GitHub
         </button>

@@ -25,7 +25,7 @@ export default async function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-black p-8 font-sans">
+    <div className="min-h-screen p-8 font-sans">
       {/* <div className="max-w-4xl mx-auto space-y-8">
         <header className="flex items-center justify-between pb-6 border-b border-white/10">
           <div>

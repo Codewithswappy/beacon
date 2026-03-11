@@ -1,22 +1,46 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --surface: #f5f5f5;
+  --surface-hover: #ebebeb;
+  --border: #e5e7eb;
+  --muted: #6b7280;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --nav-bg: #E5E7EB;
+  --tab-bg: #ffffff;
+}
+
+.dark {
+  --background: #121111;
+  --foreground: #ededed;
+  --surface: #1a1a1c;
+  --surface-hover: #252528;
+  --border: #27272a;
+  --muted: #a1a1aa;
+  --accent: #60a5fa;
+  --accent-hover: #3b82f6;
+  --nav-bg: #1E1E20;
+  --tab-bg: #121111;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-nav-bg: var(--nav-bg);
+  --color-tab-bg: var(--tab-bg);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
