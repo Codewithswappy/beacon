@@ -93,7 +93,7 @@ export function LoginForm() {
     <div className="w-full flex flex-col items-center">
       {/* Logo Container */}
       <div className="flex items-center gap-2 mb-10 w-full justify-center">
-        <Icon3dCubeSphere size={28} />
+        <Icon3dCubeSphere size={28} color="black"/>
         <span className="text-[22px] font-bold tracking-tight text-gray-900">
           Beacon
         </span>

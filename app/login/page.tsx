@@ -2,7 +2,7 @@ import { LoginForm } from "@/components/auth/LoginForm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Login - Nexus",
+  title: "Login - Beacon",
   description: "Sign in to access your dashboard",
 };
 
