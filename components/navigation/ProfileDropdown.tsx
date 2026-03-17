@@ -58,7 +58,7 @@ export function ProfileDropdown() {
     <div className="flex items-center self-center mb-1 relative shrink-0 pl-4" ref={dropdownRef}>
       <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        className="flex items-center justify-center gap-2 p-1 pr-2.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-full transition-all cursor-pointer group active:scale-95 duration-200"
+        className="flex items-center justify-center gap-2 p-1 pr-2.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-full transition-all cursor-pointer group active:scale-95 duration-200 box-shadow: rgba(255, 255, 255, 0.4) 0px 0px 0px 1px inset, rgb(255, 255, 255) 0px 1px 0px 0px inset, rgba(0, 0, 0, 0.08) 0px 0px 0px 0.5px; opacity: 1; "
       >
         <div className="w-10 h-10 rounded-full bg-linear-to-b from-[#adadad] to-[#e3d1cda3] flex items-center justify-center text-lg leading-none shadow-[inset_0_-2px_4px_rgba(0,0,0,0.1),0_2px_5px_rgba(0,0,0,0.05)] cursor-default relative z-10 select-none">
           <motion.div
@@ -77,7 +77,12 @@ export function ProfileDropdown() {
             }}
           >
             {avatarUrl ? (
-              <img src={avatarUrl} alt="User avatar" className="w-full h-full object-cover pointer-events-none" />
+              <img 
+                src={avatarUrl} 
+                alt="User avatar" 
+                className="w-full h-full object-cover pointer-events-none" 
+                onError={() => setAvatarUrl(null)}
+              />
             ) : (
               <IconUser size={24} fill="#6e6e6e" strokeWidth={3} strokeOpacity={0.3} className="pointer-events-none" />
             )}
