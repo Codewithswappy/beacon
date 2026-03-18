@@ -11,8 +11,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "sfkrssargymmulhdysgm.supabase.co",
       },
+      {
+        // Cloudinary CDN — image and video delivery
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
     ],
   },
 };
 
 export default nextConfig;
+

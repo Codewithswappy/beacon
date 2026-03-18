@@ -1,8 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { LogoutButton } from "@/components/auth/LogoutButton";
+import { VirtualFeed } from "@/components/posts/VirtualFeed";
+import { redis, CacheKeys } from "@/lib/redis";
 
-export default async function Dashboard() {
+export default async function FeedPage() {
   const supabase = await createClient();
 
   const {
@@ -13,7 +14,7 @@ export default async function Dashboard() {
     redirect("/login");
   }
 
-  // Check if onboarding is completed
+  // 1. Check if onboarding is completed
   const { data: profile } = await supabase
     .from("profiles")
     .select("onboarding_completed")
@@ -24,65 +25,98 @@ export default async function Dashboard() {
     redirect("/onboarding");
   }
 
+  // 2. Fetch the Feed (Self-Healing Cache + Timeline Resolution)
+  const cacheKey = CacheKeys.userFeed(user.id);
+  
+  // A. Level 1: Fully serialized HTML/JSON response layer
+  const cached = await redis.get<string>(cacheKey);
+
+  let initialPosts: any[] = [];
+  
+  if (cached) {
+    initialPosts = typeof cached === "string" ? JSON.parse(cached) : cached;
+  } else {
+    // B. Level 2: Fetch the Fan-out strictly-ID Timeline array
+    const timelineIds = await redis.lrange(CacheKeys.timeline(user.id), 0, 50);
+
+    if (timelineIds.length > 0) {
+      // Rehydrate the actual Post row data from Supabase
+      const { data: postsData } = await supabase
+        .from("posts")
+        .select(`
+          id,
+          caption,
+          media,
+          post_type,
+          likes_count,
+          created_at,
+          user:profiles!inner(name, username, avatar_url)
+        `)
+        .in("id", timelineIds);
+
+      if (postsData && postsData.length > 0) {
+        // Enforce the chronological ordering returned by the timeline list
+        // since `in` statements don't inherently preserve order.
+        const postsMap = new Map(postsData.map(p => [p.id, p]));
+        const sortedPosts = timelineIds.map(id => postsMap.get(id)).filter(Boolean);
+
+        initialPosts = sortedPosts.map((post: any) => ({
+          ...post,
+          user: {
+            ...post.user,
+            avatarUrl: post.user.avatar_url,
+          },
+        }));
+      }
+    } 
+
+    if (initialPosts.length === 0) {
+      // C. Fallback Level: Global / recent queries for fresh users with no feeds
+      const { data: recentPosts } = await supabase
+        .from("posts")
+        .select(`
+          id,
+          caption,
+          media,
+          post_type,
+          likes_count,
+          created_at,
+          user:profiles!inner(name, username, avatar_url)
+        `)
+        .order("created_at", { ascending: false })
+        .limit(20);
+
+      if (recentPosts) {
+         initialPosts = recentPosts.map((post: any) => ({
+          ...post,
+          user: {
+            ...post.user,
+            avatarUrl: post.user.avatar_url,
+          },
+        }));
+      }
+    }
+
+    // Safely write Level 1 cache. Set to rigidly expire in 60s
+    // to naturally self-heal and stay completely up to date.
+    if (initialPosts.length > 0) {
+      await redis.set(cacheKey, JSON.stringify(initialPosts), { ex: 60 });
+    }
+  }
+
   return (
-    <div className="min-h-screen p-8 font-sans">
-      {/* <div className="max-w-4xl mx-auto space-y-8">
-        <header className="flex items-center justify-between pb-6 border-b border-white/10">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-            <p className="text-gray-400 mt-1">Welcome back to Beacon.</p>
-          </div>
-          <LogoutButton />
+    <div className="min-h-screen bg-background pb-20 pt-8">
+      <div className="mx-auto max-w-2xl px-4 md:px-0">
+        <header className="mb-8">
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">For You</h1>
+          <p className="mt-1 text-muted">The best creative work tailored to you.</p>
         </header>
 
-        <section className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md">
-          <h2 className="text-xl font-semibold mb-4 text-gray-200">
-            Account Profile
-          </h2>
-
-          <div className="space-y-4">
-            <div className="flex flex-col gap-1">
-              <span className="text-sm text-gray-400">Email ID</span>
-              <span className="text-lg font-medium">{user.email}</span>
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <span className="text-sm text-gray-400">User ID</span>
-              <span className="font-mono text-sm break-all bg-black/50 p-2 rounded-lg border border-white/5 w-fit">
-                {user.id}
-              </span>
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <span className="text-sm text-gray-400">Last Sign In</span>
-              <span className="text-base">
-                {user.last_sign_in_at
-                  ? new Date(user.last_sign_in_at).toLocaleString()
-                  : "N/A"}
-              </span>
-            </div>
-          </div>
-        </section>
-
-        <section className="grid sm:grid-cols-2 gap-4">
-          <div className="bg-linear-to-br from-indigo-900/40 to-black border border-indigo-500/20 rounded-2xl p-6 hover:border-indigo-500/40 transition-colors">
-            <h3 className="font-semibold text-lg text-indigo-300">
-              Quick Actions
-            </h3>
-            <p className="text-indigo-200/60 mt-2 text-sm">
-              Configure your settings or explore features.
-            </p>
-          </div>
-          <div className="bg-linear-to-br from-purple-900/40 to-black border border-purple-500/20 rounded-2xl p-6 hover:border-purple-500/40 transition-colors">
-            <h3 className="font-semibold text-lg text-purple-300">
-              Analytics Space
-            </h3>
-            <p className="text-purple-200/60 mt-2 text-sm">
-              Dive deep into your application stats.
-            </p>
-          </div>
-        </section>
-      </div> */}
+        {/* ── Feed Container (Virtualised) ── */}
+        <div className="w-full">
+          <VirtualFeed initialPosts={initialPosts} />
+        </div>
+      </div>
     </div>
   );
 }

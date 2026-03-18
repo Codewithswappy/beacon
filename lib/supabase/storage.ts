@@ -132,8 +132,6 @@ export const deleteMedia = async (bucket: "avatars" | "covers" | "posts", url: s
     const { error } = await supabase.storage.from(bucket).remove([path]);
     if (error) {
       console.error(`Failed to delete old ${bucket} image at path ${path}:`, error.message);
-    } else {
-      console.log(`Successfully deleted old ${bucket} image:`, path);
     }
   } catch (err) {
     console.error("Error in deleteMedia:", err);

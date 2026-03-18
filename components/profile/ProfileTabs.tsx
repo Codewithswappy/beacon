@@ -9,7 +9,7 @@ export function ProfileTabs() {
   const [activeTab, setActiveTab] = useState("Posts");
 
   return (
-    <div className="bg-neutral-100/50 dark:bg-neutral-900/50 mb-8 inline-flex items-center gap-1.5 rounded-2xl p-1.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] backdrop-blur-md border-2 border-neutral-100/30 dark:border-neutral-800/30 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="mb-8 inline-flex items-center gap-1.5 rounded-2xl border-2 border-neutral-100/30 bg-neutral-100/50 p-1.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] backdrop-blur-md [-ms-overflow-style:none] [scrollbar-width:none] dark:border-neutral-800/30 dark:bg-neutral-900/50 [&::-webkit-scrollbar]:hidden">
       {TABS.map((tab) => {
         const isActive = activeTab === tab;
         return (
@@ -25,7 +25,7 @@ export function ProfileTabs() {
             {isActive && (
               <motion.div
                 layoutId="profile-tab-capsule"
-                className="absolute inset-0 z-0 bg-white shadow-[0_4px_12px_-2px_rgba(0,0,0,0.12),0_2px_4px_-1px_rgba(0,0,0,0.06)] border border-neutral-200/50 dark:bg-neutral-800 dark:border-neutral-700/50 dark:shadow-[0_8px_20px_rgba(0,0,0,0.4)]"
+                className="absolute inset-0 z-0 border border-neutral-200/50 bg-white shadow-[0_4px_12px_-2px_rgba(0,0,0,0.12),0_2px_4px_-1px_rgba(0,0,0,0.06)] dark:border-neutral-700/50 dark:bg-neutral-800 dark:shadow-[0_8px_20px_rgba(0,0,0,0.4)]"
                 initial={false}
                 style={{ borderRadius: 12 }}
                 transition={{ type: "spring", stiffness: 400, damping: 30 }}

@@ -1,0 +1,60 @@
+You are a senior Next.js + Cloudinary engineer.
+
+Improve the media delivery pipeline for a developer portfolio / project showcase platform where many uploads are UI screenshots (dashboards, landing pages, code editors, product UIs). The goal is to preserve extremely sharp text and edges while keeping files optimized for CDN delivery.
+
+Implement the following two Cloudinary improvements.
+
+1. Visually-Lossless Quality Mode
+
+Replace generic `q_auto` with the higher fidelity mode:
+
+q_auto:good
+
+Update the base image transformation used by `imageUrl()` so all delivery helpers inherit it automatically.
+
+New base transformation:
+
+c_limit,w_${w},q_auto:good,f_auto,dpr_auto,fl_progressive,fl_strip_profile
+
+This ensures:
+
+* visually lossless compression for UI screenshots
+* smaller file sizes compared to originals
+* automatic AVIF/WebP delivery when supported
+* progressive loading for JPEG fallback browsers
+* metadata stripping for security and smaller payloads
+
+Do not apply this change to:
+
+* LQIP placeholder generation
+* video streams
+
+2. Sharpen UI Screenshots
+
+UI screenshots (text, icons, code editors) often look slightly soft after compression. Apply a light sharpening filter during delivery to preserve crisp edges.
+
+Add the Cloudinary sharpening effect:
+
+e_sharpen:50
+
+Final image transformation should become:
+
+c_limit,w_${w},q_auto:good,f_auto,dpr_auto,fl_progressive,e_sharpen:50,fl_strip_profile
+
+Requirements:
+
+* Apply sharpening only to image delivery helpers
+* Do NOT apply sharpening to blur placeholders
+* Maintain compatibility with responsive srcSet and sizes logic
+* Ensure the transformation remains centralized in `imageUrl()` so all helpers inherit it
+
+Goal
+
+Ensure UI screenshots and design assets render extremely sharp on all devices while still benefiting from:
+
+* responsive srcSet delivery
+* automatic format selection
+* progressive image loading
+* DPR-aware resolution
+
+This should produce high-fidelity portfolio images that look crisp on retina displays while keeping bandwidth usage optimized for infinite scrolling feeds.
