@@ -2,23 +2,11 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
-import {
-  IconCheck,
-  IconLoader2,
-  IconArrowRight,
-  IconArrowLeft,
-  IconRocket,
-  IconBrandTwitter,
-  IconBrandGithub,
-  IconBrandLinkedin,
-  IconWorld,
-  IconAlertCircle,
-  Icon3dCubeSphere,
-  IconBrandX,
-} from "@tabler/icons-react";
 import { motion, AnimatePresence, easeIn } from "motion/react";
 import { debounce } from "lodash";
 import { useRouter } from "next/navigation";
+import { DuoIcon } from "@/components/ui/DuoIcon";
+import { Icon3dCubeSphere } from "@tabler/icons-react";
 
 const STEPS = [
   { id: 1, title: "Identity", sub: "Handle" },
@@ -38,15 +26,25 @@ const SKILL_OPTIONS = [
 ];
 
 const SOCIALS = [
-  { id: "twitter", icon: IconBrandX, label: "Twitter", color: "var(--foreground)" },
-  { id: "github", icon: IconBrandGithub, label: "GitHub", color: "var(--foreground)" },
+  {
+    id: "twitter",
+    icon: "x",
+    label: "Twitter",
+    color: "var(--foreground)",
+  },
+  {
+    id: "github",
+    icon: "github",
+    label: "GitHub",
+    color: "var(--foreground)",
+  },
   {
     id: "linkedin",
-    icon: IconBrandLinkedin,
+    icon: "linkedin",
     label: "LinkedIn",
     color: "#0077B5",
   },
-  { id: "website", icon: IconWorld, label: "Website", color: "#10b981" },
+  { id: "website", icon: "userCircle", label: "Website", color: "#10b981" },
 ];
 
 export function OnboardingFlow() {
@@ -85,18 +83,36 @@ export function OnboardingFlow() {
   const [activeSocial, setActiveSocial] = useState<string | null>(null);
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
 
-  // Fetch User Avatar on Mount
+  // Fetch User and check completion
   useEffect(() => {
-    const fetchUser = async () => {
+    const checkUser = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (user?.user_metadata?.avatar_url) {
+
+      if (!user) {
+        router.push("/login");
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("onboarding_completed, avatar_url")
+        .eq("id", user.id)
+        .single();
+
+      if (profile?.onboarding_completed) {
+        router.push("/");
+      }
+
+      if (profile?.avatar_url) {
+        setUserAvatar(profile.avatar_url);
+      } else if (user?.user_metadata?.avatar_url) {
         setUserAvatar(user.user_metadata.avatar_url);
       }
     };
-    fetchUser();
-  }, [supabase]);
+    checkUser();
+  }, [supabase, router]);
 
   // Username Availability Check
   const checkUsername = useCallback(
@@ -121,7 +137,7 @@ export function OnboardingFlow() {
       if (data) setUsernameStatus("taken");
       else setUsernameStatus("available");
     }, 500),
-    [supabase],
+    [supabase]
   );
 
   useEffect(() => {
@@ -131,7 +147,7 @@ export function OnboardingFlow() {
 
   const toggleSkill = (skill: string) => {
     setSelectedSkills((prev) =>
-      prev.includes(skill) ? prev.filter((s) => s !== skill) : [...prev, skill],
+      prev.includes(skill) ? prev.filter((s) => s !== skill) : [...prev, skill]
     );
   };
 
@@ -166,19 +182,19 @@ export function OnboardingFlow() {
         return (
           /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i.test(val) ||
           /^(https?:\/\/)?(www\.)?github\.com\/[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}\/?$/i.test(
-            val,
+            val
           )
         );
 
       case "linkedin":
         // LinkedIn handles are too variable, so we strictly enforce the profile URL format
         return /^(https?:\/\/)?(www\.)?linkedin\.com\/(in|company|school|me)\/[A-Za-z0-9-]{3,100}\/?$/.test(
-          val,
+          val
         );
 
       case "website":
         return /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/.test(
-          val,
+          val
         );
 
       default:
@@ -193,7 +209,7 @@ export function OnboardingFlow() {
     // Basic validation check before saving (unless skipping)
     if (!skip) {
       const allValid = Object.entries(socialLinks).every(([id, val]) =>
-        validateSocial(id, val),
+        validateSocial(id, val)
       );
       if (!allValid) return;
     }
@@ -254,7 +270,7 @@ export function OnboardingFlow() {
 
   // Spark Effect Component
   const SparkBlast = () => (
-    <div className="absolute inset-0 pointer-events-none z-100 flex items-center justify-center overflow-visible">
+    <div className="pointer-events-none absolute inset-0 z-100 flex items-center justify-center overflow-visible">
       {[...Array(12)].map((_, i) => (
         <motion.div
           key={i}
@@ -266,61 +282,64 @@ export function OnboardingFlow() {
             opacity: [1, 1, 0],
           }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="absolute w-1 h-1 bg-black dark:bg-white rounded-full"
+          className="absolute h-1 w-1 rounded-full bg-black dark:bg-white"
         />
       ))}
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-white dark:bg-background font-sans text-gray-900 dark:text-foreground select-none overflow-hidden flex flex-col tracking-tight [WebkitTapHighlightColor:transparent] transition-colors duration-300">
+    <div className="dark:bg-background dark:text-foreground [WebkitTapHighlightColor:transparent] flex min-h-screen flex-col overflow-hidden bg-white font-sans tracking-tight text-gray-900 transition-colors duration-300 select-none">
       {/* Warm Gradient Spots */}
-      <div className="fixed inset-0 z-10 overflow-hidden pointer-events-none">
-        <div className="absolute top-[20%] left-[-10%] w-[30%] h-[20%]  bg-amber-300/20 dark:bg-amber-800/10 blur-[100px]" />
-        <div className="absolute bottom-[20%] left-[-10%] w-[30%] h-[30%]  bg-cyan-400/20 dark:bg-cyan-800/10 blur-[100px]" />
-        <div className="absolute bottom-[10%] right-[-10%] w-[30%] h-[30%]  bg-rose-400/20 dark:bg-rose-800/10 blur-[100px]" />
+      <div className="pointer-events-none fixed inset-0 z-10 overflow-hidden">
+        <div className="absolute top-[20%] left-[-10%] h-[20%] w-[30%] bg-amber-300/20 blur-[100px] dark:bg-amber-800/10" />
+        <div className="absolute bottom-[20%] left-[-10%] h-[30%] w-[30%] bg-cyan-400/20 blur-[100px] dark:bg-cyan-800/10" />
+        <div className="absolute right-[-10%] bottom-[10%] h-[30%] w-[30%] bg-rose-400/20 blur-[100px] dark:bg-rose-800/10" />
       </div>
 
-      <header className="fixed top-0 left-0 w-full px-6 md:px-12 py-6 md:py-8 flex justify-between items-center z-50">
+      <header className="fixed top-0 left-0 z-50 flex w-full items-center justify-between px-6 py-6 md:px-12 md:py-8">
         <div className="flex items-center gap-2">
-          <Icon3dCubeSphere size={20} className="text-black dark:text-white md:w-6 md:h-6" />
-          <span className="font-bold text-lg md:text-xl tracking-tighter">
+         <Icon3dCubeSphere
+            size={34}
+            className="text-black dark:text-white"
+          />
+          <span className="text-lg font-bold tracking-tighter md:text-xl">
             Beacon
           </span>
         </div>
         <div className="flex items-center gap-3">
           {userAvatar ? (
-            <div className="w-12 h-12 rounded-full border-2 border-gray-200 dark:border-border shadow-sm shadow-black/10 ring-1 ring-black/10 dark:ring-white/10 overflow-hidden bg-gray-50 dark:bg-surface">
+            <div className="dark:border-border dark:bg-surface h-12 w-12 overflow-hidden rounded-full border-2 border-gray-200 bg-gray-50 shadow-sm ring-1 shadow-black/10 ring-black/10 dark:ring-white/10">
               <img
                 src={userAvatar}
                 alt="Profile"
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
               />
             </div>
           ) : (
-            <div className="w-8 h-8 rounded-full bg-gray-50 dark:bg-surface border border-gray-100 dark:border-border shadow-sm" />
+            <div className="dark:bg-surface dark:border-border h-8 w-8 rounded-full border border-gray-100 bg-gray-50 shadow-sm" />
           )}
         </div>
       </header>
 
-      <div className="flex-1 w-full max-w-5xl mx-auto px-6 md:px-10 flex flex-col md:flex-row relative z-10 pt-28 md:pt-40 items-start md:gap-20">
+      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col items-start px-6 pt-28 md:flex-row md:gap-20 md:px-10 md:pt-40">
         {/* PROGRESS SIDEBAR: RESPONSIVE LIQUID */}
-        <aside className="w-full md:w-[160px] shrink-0 mb-12 md:mb-0 pt-2">
-          <p className="hidden md:block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-8 opacity-50">
+        <aside className="mb-12 w-full shrink-0 pt-2 md:mb-0 md:w-[160px]">
+          <p className="mb-8 hidden text-[9px] font-black tracking-widest text-gray-400 uppercase opacity-50 md:block">
             OnBoarding
           </p>
-          <nav className="flex md:flex-col justify-center md:justify-start items-center md:items-start relative">
+          <nav className="relative flex items-center justify-center md:flex-col md:items-start md:justify-start">
             {STEPS.map((step, idx) => {
               const isActive = currentStep === step.id;
               const isCompleted = currentStep > step.id;
               return (
                 <div
                   key={step.id}
-                  className="relative flex flex-col md:flex-row items-center gap-2 md:gap-4 md:pb-8 last:pb-0 flex-1 md:flex-none"
+                  className="relative flex flex-1 flex-col items-center gap-2 last:pb-0 md:flex-none md:flex-row md:gap-4 md:pb-8"
                 >
                   {/* Connecting Line with Liquid Pulse */}
                   {idx !== STEPS.length - 1 && (
-                    <div className="absolute left-1/2 md:left-[9.5px] top-2.5 md:top-6 w-[calc(100%-20px)] md:w-[1px] h-[1px] md:h-full bg-gray-50 overflow-hidden -translate-y-1/2 md:translate-y-0 translate-x-[15px] md:translate-x-0">
+                    <div className="absolute top-2.5 left-1/2 h-px w-[calc(100%-20px)] translate-x-[15px] -translate-y-1/2 overflow-hidden bg-gray-50 md:top-6 md:left-[9.5px] md:h-full md:w-px md:translate-x-0 md:translate-y-0">
                       <motion.div
                         initial={false}
                         animate={{
@@ -348,7 +367,7 @@ export function OnboardingFlow() {
                               repeat: Infinity,
                               ease: "linear",
                             }}
-                            className="absolute left-0 top-0 w-full h-full bg-linear-to-r md:bg-linear-to-b from-transparent via-black/20 to-transparent"
+                            className="absolute top-0 left-0 h-full w-full bg-linear-to-r from-transparent via-black/20 to-transparent md:bg-linear-to-b"
                           />
                         )}
                       </motion.div>
@@ -359,7 +378,9 @@ export function OnboardingFlow() {
                   <div className="relative z-10">
                     <motion.div
                       animate={{
-                        backgroundColor: isCompleted ? "#10b981" : "var(--background)",
+                        backgroundColor: isCompleted
+                          ? "#10b981"
+                          : "var(--background)",
                         borderColor: isCompleted
                           ? "#10b981"
                           : isActive
@@ -376,15 +397,15 @@ export function OnboardingFlow() {
                         stiffness: 400,
                         damping: 25,
                       }}
-                      className="w-5 h-5 rounded-full flex items-center justify-center border-[1.5px] text-[9px] font-bold shadow-sm relative overflow-visible"
+                      className="relative flex h-5 w-5 items-center justify-center overflow-visible rounded-full border-[1.5px] text-[9px] font-bold shadow-sm"
                     >
                       {/* Smooth Multi-Layer Ripple */}
                       {isActive && (
-                        <div className="absolute inset-0 pointer-events-none overflow-visible">
+                        <div className="pointer-events-none absolute inset-0 overflow-visible">
                           {[0, 1].map((i) => (
                             <motion.div
                               key={i}
-                              className="absolute inset-0 rounded-full border border-foreground/10 will-change-transform"
+                              className="border-foreground/10 absolute inset-0 rounded-full border will-change-transform"
                               animate={{
                                 scale: [1, 2.5],
                                 opacity: [0.4, 0],
@@ -414,9 +435,9 @@ export function OnboardingFlow() {
                               damping: 20,
                             }}
                           >
-                            <IconCheck
-                              size={11}
-                              stroke={5}
+                            <DuoIcon
+                              name="check"
+                              size={12}
                               className="text-white"
                             />
                           </motion.div>
@@ -430,7 +451,7 @@ export function OnboardingFlow() {
                               repeat: Infinity,
                               ease: "easeInOut",
                             }}
-                            className="w-1.5 h-1.5 bg-foreground rounded-full"
+                            className="bg-foreground h-1.5 w-1.5 rounded-full"
                           />
                         ) : (
                           <motion.span key="num" className="text-gray-300">
@@ -454,7 +475,7 @@ export function OnboardingFlow() {
                           : 0,
                         scale: isActive ? 1.05 : 1,
                       }}
-                      className={`text-[10px] md:text-[12px] font-bold transition-all origin-left text-center md:text-left ${isActive ? "text-foreground" : "text-gray-300 dark:text-gray-600"}`}
+                      className={`origin-left text-center text-[10px] font-bold transition-all md:text-left md:text-[12px] ${isActive ? "text-foreground" : "text-gray-300 dark:text-gray-600"}`}
                     >
                       {step.title}
                     </motion.span>
@@ -463,7 +484,7 @@ export function OnboardingFlow() {
                         opacity: isActive ? 1 : 0,
                         height: isActive ? "auto" : 0,
                       }}
-                      className="hidden md:block text-[9px] font-semibold text-gray-400 overflow-hidden"
+                      className="hidden overflow-hidden text-[9px] font-semibold text-gray-400 md:block"
                     >
                       {step.sub}
                     </motion.span>
@@ -474,8 +495,8 @@ export function OnboardingFlow() {
           </nav>
         </aside>
 
-        <main className="flex-1 flex justify-center perspective-[1000px] w-full">
-          <div className="w-full max-w-[400px] md:max-w-[440px] relative px-1 md:px-0">
+        <main className="flex w-full flex-1 justify-center perspective-[1000px]">
+          <div className="relative w-full max-w-[400px] px-1 md:max-w-[440px] md:px-0">
             <AnimatePresence>{showSpark && <SparkBlast />}</AnimatePresence>
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
@@ -490,7 +511,7 @@ export function OnboardingFlow() {
                 {currentStep === 1 && (
                   <div className="space-y-8">
                     <div className="space-y-2">
-                      <h1 className="text-[28px] font-black leading-tight tracking-tight text-foreground">
+                      <h1 className="text-foreground text-[28px] leading-tight font-black tracking-tight">
                         Choose your handle.
                       </h1>
                       <p className="text-[14px] font-medium text-gray-400">
@@ -499,7 +520,7 @@ export function OnboardingFlow() {
                     </div>
                     <div className="space-y-3">
                       <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 font-bold">
+                        <span className="absolute top-1/2 left-4 -translate-y-1/2 font-bold text-gray-300">
                           @
                         </span>
                         <input
@@ -510,36 +531,34 @@ export function OnboardingFlow() {
                             setUsername(
                               e.target.value
                                 .toLowerCase()
-                                .replace(/[^a-z0-9_]/g, ""),
+                                .replace(/[^a-z0-9_]/g, "")
                             )
                           }
                           placeholder="handle"
-                          className={`w-full pl-8 pr-12 py-3 bg-white dark:bg-surface border rounded-xl text-base font-bold transition-all focus:outline-none focus:ring-0 ${
+                          className={`dark:bg-surface w-full rounded-xl border bg-white py-3 pr-12 pl-8 text-base font-bold transition-all focus:ring-0 focus:outline-none ${
                             usernameStatus === "taken"
                               ? "border-red-100 focus:border-red-400"
                               : usernameStatus === "available"
                                 ? "border-green-100 focus:border-green-400"
-                                : "border-gray-50 dark:border-border focus:border-foreground"
+                                : "dark:border-border focus:border-foreground border-gray-50"
                           }`}
                         />
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                        <div className="absolute top-1/2 right-4 -translate-y-1/2">
                           {usernameStatus === "checking" && (
-                            <IconLoader2
-                              className="animate-spin text-gray-300"
-                              size={16}
-                            />
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-foreground" />
                           )}
                           {usernameStatus === "available" && (
-                            <IconCheck
-                              className="text-green-500"
+                            <DuoIcon
+                              name="check"
                               size={18}
-                              stroke={4}
+                              className="text-green-500"
                             />
                           )}
                           {usernameStatus === "taken" && (
-                            <IconAlertCircle
-                              className="text-red-400"
+                            <DuoIcon
+                              name="x"
                               size={18}
+                              className="text-red-400"
                             />
                           )}
                         </div>
@@ -549,7 +568,7 @@ export function OnboardingFlow() {
                           beacon.com/{username || "..."}
                         </span>
                         {usernameStatus === "taken" && (
-                          <span className="text-[9px] font-black text-red-500 uppercase tracking-widest">
+                          <span className="text-[9px] font-black tracking-widest text-red-500 uppercase">
                             Taken
                           </span>
                         )}
@@ -561,7 +580,7 @@ export function OnboardingFlow() {
                 {currentStep === 2 && (
                   <div className="space-y-8">
                     <div className="space-y-2">
-                      <h1 className="text-[28px] font-black leading-tight tracking-tight text-foreground">
+                      <h1 className="text-foreground text-[28px] leading-tight font-black tracking-tight">
                         What's your craft?
                       </h1>
                       <p className="text-[14px] font-medium text-gray-400">
@@ -573,7 +592,7 @@ export function OnboardingFlow() {
                         <button
                           key={skill}
                           onClick={() => toggleSkill(skill)}
-                          className={`px-4 py-2 rounded-lg text-[12px] font-bold transition-all border focus:outline-none focus:ring-0 ${selectedSkills.includes(skill) ? "bg-foreground text-background border-foreground" : "bg-white dark:bg-surface text-gray-500 dark:text-muted border-gray-100 dark:border-border hover:border-foreground"}`}
+                          className={`rounded-lg border px-4 py-2 text-[12px] font-bold transition-all focus:ring-0 focus:outline-none ${selectedSkills.includes(skill) ? "bg-foreground text-background border-foreground" : "dark:bg-surface dark:text-muted dark:border-border hover:border-foreground border-gray-100 bg-white text-gray-500"}`}
                         >
                           {skill}
                         </button>
@@ -585,7 +604,7 @@ export function OnboardingFlow() {
                 {currentStep === 3 && (
                   <div className="space-y-8">
                     <div className="space-y-2">
-                      <h1 className="text-[28px] font-black leading-tight tracking-tight text-foreground">
+                      <h1 className="text-foreground text-[28px] leading-tight font-black tracking-tight">
                         Final touches.
                       </h1>
                       <p className="text-[14px] font-medium text-gray-400">
@@ -602,27 +621,35 @@ export function OnboardingFlow() {
                             whileHover={{ y: -2 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => setActiveSocial(soc.id)}
-                            className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all border-2 ${
+                            className={`flex h-12 w-12 items-center justify-center rounded-2xl border-2 transition-all ${
                               activeSocial === soc.id
                                 ? "border-foreground bg-foreground text-background shadow-lg shadow-black/10 dark:shadow-white/5"
-                                : "border-gray-50 dark:border-border bg-white dark:bg-surface text-gray-400 dark:text-muted hover:border-gray-200 dark:hover:border-foreground"
+                                : "dark:border-border dark:bg-surface dark:text-muted dark:hover:border-foreground border-gray-50 bg-white text-gray-400 hover:border-gray-200"
                             } relative`}
                           >
-                            <soc.icon
+                            <DuoIcon
+                              name={soc.icon as any}
                               size={22}
-                              color={
+                              className={
                                 activeSocial === soc.id
+                                  ? "text-inherit"
+                                  : socialLinks[soc.id]
+                                    ? ""
+                                    : "text-inherit"
+                              }
+                              style={{
+                                color: activeSocial === soc.id
                                   ? "currentColor"
                                   : socialLinks[soc.id]
                                     ? soc.color
                                     : "currentColor"
-                              }
+                              }}
                             />
                             {socialLinks[soc.id] && activeSocial !== soc.id && (
                               <motion.div
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
-                                className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white dark:border-background"
+                                className="dark:border-background absolute -top-1 -right-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-green-500"
                               />
                             )}
                           </motion.button>
@@ -638,16 +665,16 @@ export function OnboardingFlow() {
                               initial={{ y: 10, opacity: 0 }}
                               animate={{ y: 0, opacity: 1 }}
                               exit={{ y: -10, opacity: 0 }}
-                              className="relative group"
+                              className="group relative"
                             >
                               <div
-                                className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${!validateSocial(activeSocial, socialLinks[activeSocial]) ? "text-red-400" : "text-gray-300"}`}
+                                className={`absolute top-1/2 left-4 -translate-y-1/2 transition-colors ${!validateSocial(activeSocial, socialLinks[activeSocial]) ? "text-red-400" : "text-gray-300"}`}
                               >
                                 {(() => {
-                                  const Icon =
+                                  const iconName =
                                     SOCIALS.find((s) => s.id === activeSocial)
-                                      ?.icon || IconWorld;
-                                  return <Icon size={18} />;
+                                      ?.icon || "userCircle";
+                                  return <DuoIcon name={iconName as any} size={18} />;
                                 })()}
                               </div>
                               <input
@@ -657,7 +684,7 @@ export function OnboardingFlow() {
                                 onChange={(e) =>
                                   handleSocialChange(
                                     activeSocial,
-                                    e.target.value,
+                                    e.target.value
                                   )
                                 }
                                 placeholder={
@@ -667,20 +694,20 @@ export function OnboardingFlow() {
                                       ? "@handle"
                                       : `Your ${activeSocial} handle...`
                                 }
-                                className={`w-full pl-11 pr-16 py-3 bg-gray-50/50 dark:bg-surface border-2 rounded-xl text-sm font-bold transition-all placeholder:text-gray-200 dark:placeholder:text-muted focus:outline-none focus:ring-0 ${
+                                className={`dark:bg-surface dark:placeholder:text-muted w-full rounded-xl border-2 bg-gray-50/50 py-3 pr-16 pl-11 text-sm font-bold transition-all placeholder:text-gray-200 focus:ring-0 focus:outline-none ${
                                   !validateSocial(
                                     activeSocial,
-                                    socialLinks[activeSocial],
+                                    socialLinks[activeSocial]
                                   )
                                     ? "border-red-100 focus:border-red-400"
-                                    : "border-transparent focus:border-foreground"
+                                    : "focus:border-foreground border-transparent"
                                 }`}
                               />
                               {!validateSocial(
                                 activeSocial,
-                                socialLinks[activeSocial],
+                                socialLinks[activeSocial]
                               ) && (
-                                <span className="absolute -bottom-5 left-1 text-[10px] font-bold text-red-500 uppercase tracking-tight">
+                                <span className="absolute -bottom-5 left-1 text-[10px] font-bold tracking-tight text-red-500 uppercase">
                                   Enter a valid {activeSocial}{" "}
                                   {activeSocial === "linkedin"
                                     ? "link"
@@ -689,7 +716,7 @@ export function OnboardingFlow() {
                               )}
                               <button
                                 onClick={() => setActiveSocial(null)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-400 hover:text-black dark:hover:text-white uppercase tracking-tight focus:outline-none focus:ring-0"
+                                className="absolute top-1/2 right-3 -translate-y-1/2 text-[10px] font-black tracking-tight text-gray-400 uppercase hover:text-black focus:ring-0 focus:outline-none dark:hover:text-white"
                               >
                                 Done
                               </button>
@@ -698,12 +725,12 @@ export function OnboardingFlow() {
                             <motion.div
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
-                              className="h-full flex items-center justify-center border-2 border-dashed border-gray-200 dark:border-border rounded-2xl py-8 group hover:border-gray-300 dark:hover:border-muted transition-colors cursor-pointer focus:outline-none focus:ring-0"
+                              className="dark:border-border group dark:hover:border-muted flex h-full cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 py-8 transition-colors hover:border-gray-300 focus:ring-0 focus:outline-none"
                               onClick={() => setActiveSocial("twitter")}
                             >
-                              <p className="text-[12px] font-bold text-gray-400/50 dark:text-muted/50 group-hover:text-gray-600 dark:group-hover:text-muted transition-colors flex items-center gap-2">
+                              <p className="dark:text-muted/50 dark:group-hover:text-muted flex items-center gap-2 text-[12px] font-bold text-gray-400/50 transition-colors group-hover:text-gray-600">
                                 <span>Connect your presence</span>
-                                <IconArrowRight size={12} />
+                                <DuoIcon name="arrowRight" size={14} />
                               </p>
                             </motion.div>
                           )}
@@ -713,7 +740,7 @@ export function OnboardingFlow() {
                       {/* Bio Area */}
                       <div className="space-y-3 pt-2">
                         <div className="flex items-center justify-between px-1">
-                          <label className="text-[10px] font-semibold text-gray-400  tracking-[0.2em]">
+                          <label className="text-[10px] font-semibold tracking-[0.2em] text-gray-400">
                             Bio & Identity
                           </label>
                           <span className="text-[10px] font-bold text-gray-300">
@@ -725,7 +752,7 @@ export function OnboardingFlow() {
                           onChange={(e) => setBio(e.target.value.slice(0, 160))}
                           placeholder="Designer by day, builder by night..."
                           rows={3}
-                          className="w-full p-4 bg-white dark:bg-surface border-3 border-gray-100 dark:border-border rounded-[10px] text-[14px] font-normal focus:outline-none focus:border-gray-200 dark:focus:border-foreground transition-all resize-none shadow-xs placeholder:text-gray-300 dark:placeholder:text-muted focus:ring-0"
+                          className="dark:bg-surface dark:border-border dark:focus:border-foreground dark:placeholder:text-muted w-full resize-none rounded-[10px] border-3 border-gray-100 bg-white p-4 text-[14px] font-normal shadow-xs transition-all placeholder:text-gray-300 focus:border-gray-200 focus:ring-0 focus:outline-none"
                         />
                       </div>
                     </div>
@@ -736,9 +763,9 @@ export function OnboardingFlow() {
                   {currentStep > 1 && (
                     <button
                       onClick={handleBack}
-                      className="w-10 h-10 rounded-lg border border-gray-50 dark:border-border flex items-center justify-center hover:bg-gray-50 dark:hover:bg-surface-hover transition-all text-gray-400 hover:text-foreground cursor-pointer shadow-xs focus:outline-none focus:ring-0"
+                      className="dark:border-border dark:hover:bg-surface-hover hover:text-foreground flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg border border-gray-50 text-gray-400 shadow-xs transition-all hover:bg-gray-50 focus:ring-0 focus:outline-none"
                     >
-                      <IconArrowLeft size={16} stroke={4} />
+                      <DuoIcon name="chevronLeft" size={18} />
                     </button>
                   )}
                   <motion.button
@@ -752,29 +779,29 @@ export function OnboardingFlow() {
                       (currentStep === 2 && selectedSkills.length === 0) ||
                       (currentStep === 3 &&
                         !Object.entries(socialLinks).every(([id, val]) =>
-                          validateSocial(id, val),
+                          validateSocial(id, val)
                         ))
                     }
-                    className="flex-1 bg-foreground text-background h-10 rounded-lg text-xs font-bold flex items-center justify-center gap-2 hover:outline-2 hover:outline-gray-200 dark:hover:outline-gray-700 transition-all disabled:opacity-20 cursor-pointer shadow-lg shadow-black/5 focus:outline-none focus:ring-0"
+                    className="bg-foreground text-background flex h-10 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg text-xs font-bold shadow-lg shadow-black/5 transition-all hover:outline-2 hover:outline-gray-200 focus:ring-0 focus:outline-none disabled:opacity-20 dark:hover:outline-gray-700"
                   >
                     {loading ? (
-                      <IconLoader2 className="animate-spin" size={14} />
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-background/30 border-t-background" />
                     ) : (
                       <>
                         <span>
                           {currentStep === 3 ? "Complete Profile" : "Continue"}
                         </span>
-                        <IconArrowRight size={14} stroke={4} />
+                        <DuoIcon name="arrowRight" size={16} />
                       </>
                     )}
                   </motion.button>
                   <button
                     onClick={() => saveProfile(true)}
-                    className="text-[11px] font-black text-gray-400 hover:text-foreground px-2 transition-all focus:outline-none focus:ring-0"
+                    className="hover:text-foreground px-2 text-[11px] font-black text-gray-400 transition-all focus:ring-0 focus:outline-none"
                   >
                     <span className="flex items-center justify-center gap-2">
                       Skip
-                      <IconArrowRight size={14} stroke={4} />
+                      <DuoIcon name="arrowRight" size={16} />
                     </span>
                   </button>
                 </div>

@@ -2,30 +2,30 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --surface: #f5f5f5;
-  --surface-hover: #ebebeb;
-  --border: #e5e7eb;
-  --muted: #6b7280;
-  --accent: #3b82f6;
-  --accent-hover: #2563eb;
-  --nav-bg: #E5E7EB;
-  --tab-bg: #ffffff;
+ :root {
+  --background: var(--color-neutral-50);
+  --foreground: var(--color-neutral-950);
+  --surface: var(--color-neutral-0);
+  --surface-hover: var(--color-neutral-100);
+  --border: var(--color-neutral-200);
+  --muted: var(--color-neutral-500);
+  --accent: var(--color-neutral-900);
+  --accent-hover: var(--color-neutral-800);
+  --nav-bg: var(--color-neutral-200);
+  --tab-bg: var(--color-neutral-0);
 }
 
 .dark {
-  --background: #121111;
-  --foreground: #ededed;
-  --surface: #1a1a1c;
-  --surface-hover: #252528;
-  --border: #27272a;
-  --muted: #a1a1aa;
-  --accent: #60a5fa;
-  --accent-hover: #3b82f6;
-  --nav-bg: #1E1E20;
-  --tab-bg: #121111;
+  --background: var(--color-neutral-900);
+  --foreground: var(--color-neutral-50);
+  --surface: var(--color-neutral-800);
+  --surface-hover: var(--color-neutral-700);
+  --border: var(--color-neutral-800);
+  --muted: var(--color-neutral-400);
+  --accent: var(--color-neutral-50);
+  --accent-hover: var(--color-neutral-200);
+  --nav-bg: var(--color-neutral-800);
+  --tab-bg: var(--color-neutral-900);
 }
 
 @theme inline {
@@ -39,15 +39,24 @@
   --color-accent-hover: var(--accent-hover);
   --color-nav-bg: var(--nav-bg);
   --color-tab-bg: var(--tab-bg);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+::selection {
+  background-color: rgba(29, 155, 240, 0.2);
+  color: inherit;
+}
+
 
 * {
   -webkit-tap-highlight-color: transparent !important;
@@ -65,10 +74,37 @@ body {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+  
+  /* Custom Scrollbar for premium feel */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 10px;
+    border: 2px solid var(--background);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--muted);
+  }
 }
 
 
 
 .beacon-shadow {
-  box-shadow: rgba(255, 255, 255, 0.4) 0px 0px 0px 1px inset, rgb(255, 255, 255) 0px 1px 0px 0px inset, rgba(0, 0, 0, 0.08) 0px 0px 0px 0.5px; opacity: 1;
+  box-shadow: 
+    0 0 0 1px rgba(0,0,0,0.05),
+    0 2px 4px rgba(0,0,0,0.05),
+    0 12px 24px rgba(0,0,0,0.05);
+}
+
+.dark .beacon-shadow {
+  box-shadow: 
+    0 0 0 1px rgba(255,255,255,0.1),
+    0 2px 4px rgba(0,0,0,0.2),
+    0 12px 24px rgba(0,0,0,0.4);
 }

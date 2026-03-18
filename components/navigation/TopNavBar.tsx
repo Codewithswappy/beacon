@@ -4,30 +4,29 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  IconHome,
-  IconCompass,
-  IconCamera,
-  IconUser,
-  IconBookmark,
-  IconSettings,
   Icon3dCubeSphere,
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { ProfileDropdown } from "./ProfileDropdown";
+import { AnimatePresence } from "motion/react";
+import { DuoIcon } from "@/components/ui/DuoIcon";
 
 const NAV_ITEMS = [
-  { name: "Home", href: "/", icon: IconHome },
-  { name: "Explore", href: "/explore", icon: IconCompass },
-  { name: "Shots", href: "/shots", icon: IconCamera },
-  { name: "Profile", href: "/profile", icon: IconUser },
-  { name: "Bookmarks", href: "/bookmarks", icon: IconBookmark },
-  { name: "Settings", href: "/settings", icon: IconSettings },
+  { name: "Home", href: "/", icon: "home" },
+  { name: "Explore", href: "/explore", icon: "explore" },
+  { name: "Shots", href: "/shots", icon: "shots" },
+  { name: "Profile", href: "/profile", icon: "userCircle" },
+  { name: "Bookmarks", href: "/bookmarks", icon: "bookmark" },
+  { name: "Settings", href: "/settings", icon: "settings" },
 ];
 
 export function TopNavBar() {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState(pathname);
+  const [isNavbarVisible, setIsNavbarVisible] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isWaitLeave, setIsWaitLeave] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -42,17 +41,104 @@ export function TopNavBar() {
     return null;
   }
 
+  const containerVariants: any = {
+    hidden: {
+      width: 0,
+      opacity: 0,
+      transition: {
+        staggerChildren: 0.05,
+        staggerDirection: -1,
+        when: "afterChildren",
+      },
+    },
+    visible: {
+      width: "auto",
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants: any = {
+    hidden: {
+      opacity: 0,
+      x: -15,
+      scale: 0.9,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 30,
+      },
+    },
+    visible: {
+      opacity: 1,
+      x: 0,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 24,
+        mass: 0.5,
+      },
+    },
+  };
+
   // To seamlessly connect to the page content, the active tab should share the exact background color
   // as the page below it. The page defaults to white (light mode) or black (dark mode).
 
+  // Determine final visibility
+  // 1. If Pinned (Visible) -> Show
+  // 2. If Unpinned -> Show ONLY if Hovered AND we aren't waiting for the mouse to leave after a manual close
+  const showNav = isNavbarVisible || (isHovered && !isWaitLeave);
+
   return (
-    <div className="w-full bg-nav-bg flex justify-between sticky top-0 z-50 pt-1">
+    <div
+      className={`sticky top-0 z-50 flex w-full justify-between pt-1 transition-colors duration-500 ease-in-out ${
+        isNavbarVisible
+          ? "md:bg-nav-bg bg-background"
+          : isHovered && !isWaitLeave
+            ? "bg-nav-bg"
+            : "bg-background"
+      }`}
+    >
       {/* Left side: Logo and Navigation Links */}
-      <div className="flex flex-1 items-end min-w-0 pr-4">
-        <div className="flex items-center justify-center px-6 rounded-tr-3xl bg-background relative shrink-0 self-stretch z-10">
+      <div className="flex min-w-0 flex-1 items-end pr-4">
+        <div className="bg-background group relative z-10 flex shrink-0 items-center justify-center self-stretch rounded-tr-3xl pr-4 pl-6">
           <Icon3dCubeSphere size={35} />
+
+          {/* Collapse Toggle Button - Always visible next to logo on desktop, hidden on mobile */}
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9, rotate: isNavbarVisible ? -10 : 190 }}
+            onClick={() => {
+              if (isNavbarVisible) {
+                // If we are CLOSING it while mouse is there, prevent re-hovering
+                setIsWaitLeave(true);
+              }
+              setIsNavbarVisible(!isNavbarVisible);
+            }}
+            className="hover:bg-surface text-muted hover:text-foreground z-50 ml-3 hidden cursor-pointer overflow-hidden rounded-lg p-1.5 transition-colors md:flex"
+          >
+            <motion.div
+              animate={{
+                rotate: isNavbarVisible ? 0 : 180,
+                scale: isNavbarVisible ? 1 : 0.85,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 500,
+                damping: 22,
+                mass: 0.8,
+              }}
+            >
+              <DuoIcon name="sidebar" size={20} className="transition-transform group-hover:scale-105" />
+            </motion.div>
+          </motion.button>
+
           <svg
-            className="absolute right-[-23px] -bottom-0.5 md:bottom-0 w-6 h-6 text-background -scale-x-100"
+            className="text-background absolute right-[-23px] -bottom-0.5 h-6 w-6 -scale-x-100 md:bottom-0"
             fill="currentColor"
             viewBox="0 0 24 24"
           >
@@ -60,70 +146,96 @@ export function TopNavBar() {
           </svg>
         </div>
 
-        <nav className="fixed bottom-0 left-0 right-0 md:static flex items-start md:items-end justify-around md:justify-start gap-0 md:gap-2 w-full px-0 md:pl-[46px] md:pr-4 pb-0 md:pb-0 bg-nav-bg md:bg-transparent z-40 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {NAV_ITEMS.map((item, index) => {
-            const isActive = activeTab === item.href;
-            const isFirst = index === 0;
-            const isLast = index === NAV_ITEMS.length - 1;
-
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setActiveTab(item.href)}
-                className={`relative ${isActive ? "max-md:flex-[1.15]" : "max-md:flex-1"} flex-1 md:flex-none px-2 md:px-5 pb-[calc(16px+env(safe-area-inset-bottom))] md:pb-3 pt-4 md:pt-3 flex items-center justify-center gap-2 z-10 font-medium whitespace-nowrap transition-colors duration-300 ${
-                  isActive
-                    ? "text-foreground"
-                    : "text-muted hover:text-foreground/80"
-                }`}
+        {/* Middle Navigation - Hover Zone */}
+        <div
+          className="flex min-h-[58px] flex-1 items-end"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => {
+            setIsHovered(false);
+            setIsWaitLeave(false);
+          }}
+        >
+          <AnimatePresence mode="popLayout">
+            {showNav && (
+              <motion.div
+                key="nav-links-container"
+                className="flex items-end overflow-hidden"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
               >
-                {isActive && mounted && (
-                  <motion.div
-                    layoutId="active-nav-tab"
-                    className={`absolute inset-x-0 inset-y-0 bg-background md:rounded-b-none md:rounded-t-3xl drop-shadow-[0_8px_8px_rgba(0,0,0,0.05)] md:drop-shadow-[0_-5px_10px_rgba(0,0,0,0.06)] dark:drop-shadow-none ${isFirst ? "max-md:rounded-b-3xl max-md:rounded-bl-none" : isLast ? "max-md:rounded-b-3xl max-md:rounded-br-none" : "max-md:rounded-b-3xl"}`}
-                    initial={false}
-                    transition={{
-                      type: "spring",
-                      stiffness: 400,
-                      damping: 25,
-                      mass: 0.8,
-                    }}
-                    style={{ zIndex: -1 }}
-                  >
-                    {/* Left curve connecting to background */}
-                    <svg
-                      className={`absolute w-6 h-6 text-background -left-6 top-0 -scale-y-100 md:scale-y-100 md:bottom-0 md:top-auto ${isFirst ? "max-md:hidden" : ""}`}
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M24 24H0C13.255 24 24 13.255 24 0V24Z" />
-                    </svg>
-                    {/* Right curve connecting to background */}
-                    <svg
-                      className={`absolute w-6 h-6 text-background -right-6 top-0 -scale-y-100 -scale-x-100 md:scale-y-100 md:-scale-x-100 md:bottom-0 md:top-auto ${isLast ? "max-md:hidden" : ""}`}
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M24 24H0C13.255 24 24 13.255 24 0V24Z" />
-                    </svg>
-                  </motion.div>
-                )}
+                <nav className="bg-nav-bg fixed right-0 bottom-0 left-0 z-40 flex w-full items-start justify-around gap-0 overflow-x-auto px-0 pb-0 [-ms-overflow-style:none] [scrollbar-width:none] md:static md:items-end md:justify-start md:gap-2 md:bg-transparent md:pr-4 md:pb-0 md:pl-[46px] [&::-webkit-scrollbar]:hidden">
+                  {NAV_ITEMS.map((item, index) => {
+                    const isActive = activeTab === item.href;
+                    const isFirst = index === 0;
+                    const isLast = index === NAV_ITEMS.length - 1;
 
-                <item.icon
-                  stroke={isActive ? 2 : 1.5}
-                  className="w-6 h-6 md:w-5 md:h-5 shrink-0"
-                />
-                <span className="hidden md:block text-sm md:text-base">
-                  {item.name}
-                </span>
-              </Link>
-            );
-          })}
-        </nav>
+                    return (
+                      <motion.div
+                        key={item.href}
+                        variants={itemVariants}
+                        className="flex-1 md:flex-none"
+                      >
+                        <Link
+                          href={item.href}
+                          onClick={() => setActiveTab(item.href)}
+                          className={`relative w-full ${isActive ? "max-md:flex-[1.15]" : ""} z-10 flex items-center justify-center gap-2 px-2 pt-4 pb-[calc(16px+env(safe-area-inset-bottom))] font-medium whitespace-nowrap transition-colors duration-300 md:px-5 md:pt-3 md:pb-3 ${
+                            isActive
+                              ? "text-foreground"
+                              : "text-muted hover:text-foreground/80"
+                          }`}
+                        >
+                          {isActive && mounted && (
+                            <motion.div
+                              layoutId="active-nav-tab"
+                              className={`bg-background absolute inset-x-0 inset-y-0 drop-shadow-[0_8px_8px_rgba(0,0,0,0.05)] md:rounded-t-3xl md:rounded-b-none md:drop-shadow-[0_-5px_10px_rgba(0,0,0,0.06)] dark:drop-shadow-none ${isFirst ? "max-md:rounded-b-3xl max-md:rounded-bl-none" : isLast ? "max-md:rounded-b-3xl max-md:rounded-br-none" : "max-md:rounded-b-3xl"}`}
+                              initial={false}
+                              transition={{
+                                type: "spring",
+                                stiffness: 400,
+                                damping: 25,
+                                mass: 0.8,
+                              }}
+                              style={{ zIndex: -1 }}
+                            >
+                              <svg
+                                className={`text-background absolute top-0 -left-6 h-6 w-6 -scale-y-100 md:top-auto md:bottom-0 md:scale-y-100 ${isFirst ? "max-md:hidden" : ""}`}
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M24 24H0C13.255 24 24 13.255 24 0V24Z" />
+                              </svg>
+                              <svg
+                                className={`text-background absolute top-0 -right-6 h-6 w-6 -scale-x-100 -scale-y-100 md:top-auto md:bottom-0 md:-scale-x-100 md:scale-y-100 ${isLast ? "max-md:hidden" : ""}`}
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M24 24H0C13.255 24 24 13.255 24 0V24Z" />
+                              </svg>
+                            </motion.div>
+                          )}
+                          <DuoIcon
+                            name={item.icon as any}
+                            size={isActive ? 22 : 20}
+                            className={`shrink-0 transition-all ${isActive ? "text-foreground scale-110" : "text-neutral-500 group-hover:text-foreground"}`}
+                          />
+                          <span className="hidden text-sm md:block md:text-base">
+                            {item.name}
+                          </span>
+                        </Link>
+                      </motion.div>
+                    );
+                  })}
+                </nav>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
-      {/* Right side: Profile Dropdown */}
-      <div className="flex items-center justify-end pt-1 pr-4 md:pr-6 relative z-50 shrink-0">
+      {/* Right side: Profile Dropdown - Stays visible as requested */}
+      <div className="relative z-50 flex shrink-0 items-center justify-end pt-1 pr-4 md:pr-6">
         <ProfileDropdown />
       </div>
     </div>

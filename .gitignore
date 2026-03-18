@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# custom icons
+/public/duo-solid/
+/public/duo-stroke/
+

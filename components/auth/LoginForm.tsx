@@ -90,10 +90,10 @@ export function LoginForm() {
   };
 
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="flex w-full flex-col items-center">
       {/* Logo Container */}
-      <div className="flex items-center gap-2 mb-10 w-full justify-center">
-        <Icon3dCubeSphere size={28} className="text-black dark:text-white"/>
+      <div className="mb-10 flex w-full items-center justify-center gap-2">
+        <Icon3dCubeSphere size={28} className="text-black dark:text-white" />
         <span className="text-[22px] font-bold tracking-tight text-gray-900 dark:text-gray-100">
           Beacon
         </span>
@@ -119,14 +119,16 @@ export function LoginForm() {
 
       <form onSubmit={handleCredentials} className="w-full space-y-4">
         <div className="space-y-1.5">
-          <label className="text-[13px] font-medium text-gray-700 dark:text-gray-300">Email</label>
+          <label className="text-[13px] font-medium text-gray-700 dark:text-gray-300">
+            Email
+          </label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             required
-            className="w-full px-3 py-2.5 bg-white dark:bg-white/5 border border-[#e5e7eb] dark:border-[#333] rounded-[8px] text-[14px] text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-400 focus:border-transparent transition-all shadow-sm"
+            className="w-full rounded-[8px] border border-[#e5e7eb] bg-white px-3 py-2.5 text-[14px] text-gray-900 placeholder-gray-400 shadow-sm transition-all focus:border-transparent focus:ring-2 focus:ring-gray-300 focus:outline-none dark:border-[#333] dark:bg-white/5 dark:text-gray-100 dark:placeholder-gray-600 dark:focus:ring-gray-400"
           />
         </div>
 
@@ -141,16 +143,16 @@ export function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="• • • • • • •"
               required
-              className={`w-full pl-3 pr-10 py-2.5 bg-white dark:bg-white/5 border rounded-[8px] text-[14px] text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none transition-all shadow-sm ${
+              className={`w-full rounded-[8px] border bg-white py-2.5 pr-10 pl-3 text-[14px] text-gray-900 placeholder-gray-400 shadow-sm transition-all focus:outline-none dark:bg-white/5 dark:text-gray-100 dark:placeholder-gray-600 ${
                 errorMessage && !errorMessage.includes("Confirmation")
-                  ? "border-orange-500 animate-shake"
-                  : "border-[#e5e7eb] dark:border-[#333] focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-700 focus:border-transparent"
+                  ? "animate-shake border-orange-500"
+                  : "border-[#e5e7eb] focus:border-transparent focus:ring-2 focus:ring-gray-300 dark:border-[#333] dark:focus:ring-gray-700"
               }`}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none"
+              className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none dark:text-gray-500 dark:hover:text-gray-300"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? (
@@ -161,12 +163,12 @@ export function LoginForm() {
             </button>
           </div>
           {errorMessage && (
-            <p className="text-[12px] mt-1 text-orange-600 font-medium animate-in fade-in slide-in-from-top-1 duration-200">
+            <p className="animate-in fade-in slide-in-from-top-1 mt-1 text-[12px] font-medium text-orange-600 duration-200">
               {errorMessage}
             </p>
           )}
           {successMessage && (
-            <p className="text-[12px] mt-1 text-emerald-600 font-medium animate-in fade-in slide-in-from-top-1 duration-200">
+            <p className="animate-in fade-in slide-in-from-top-1 mt-1 text-[12px] font-medium text-emerald-600 duration-200">
               {successMessage}
             </p>
           )}
@@ -174,21 +176,21 @@ export function LoginForm() {
             !errorMessage &&
             !successMessage &&
             password.length > 0 && (
-              <p className="text-[11px] mt-1 text-gray-500">
+              <p className="mt-1 text-[11px] text-gray-500">
                 Min. 8 chars, 1 uppercase, 1 number, 1 special char.
               </p>
             )}
         </div>
 
-        <div className="border border-[#e5e7eb] dark:border-[#333] rounded-[12px] p-0.5">
+        <div className="rounded-[12px] border border-[#e5e7eb] p-0.5 dark:border-[#333]">
           <button
             type="submit"
             disabled={loading !== null}
-            className="w-full py-[11px] px-4 bg-linear-to-b from-[#2e2e2e] to-[#121212] dark:from-white dark:to-gray-200 text-white dark:text-black rounded-[10px] text-[14px] font-bold cursor-pointer tracking-wide shadow-[0_2px_4px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] dark:shadow-[0_2px_4px_rgba(255,255,255,0.1)] border border-[#1e1e1e] dark:border-gray-300 hover:from-[#2a2a2a] hover:to-[#090909] dark:hover:from-gray-100 dark:hover:to-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black dark:focus:ring-white transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full cursor-pointer rounded-[10px] border border-[#1e1e1e] bg-linear-to-b from-[#2e2e2e] to-[#121212] px-4 py-[11px] text-[14px] font-bold tracking-wide text-white shadow-[0_2px_4px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] transition-all hover:from-[#2a2a2a] hover:to-[#090909] focus:ring-2 focus:ring-black focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-70 dark:border-gray-300 dark:from-white dark:to-gray-200 dark:text-black dark:shadow-[0_2px_4px_rgba(255,255,255,0.1)] dark:hover:from-gray-100 dark:hover:to-white dark:focus:ring-white"
           >
             {loading === "credentials" ? (
               <div className="flex items-center justify-center gap-2">
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                 Processing...
               </div>
             ) : isSignUp ? (
@@ -203,44 +205,44 @@ export function LoginForm() {
       <button
         type="button"
         onClick={() => setIsSignUp(!isSignUp)}
-        className="mt-4 text-[13px] text-gray-500 "
+        className="mt-4 text-[13px] text-gray-500"
       >
         {isSignUp ? (
           <>
             Already have an account?{" "}
-            <span className="text-blue-400 hover:text-blue-500 dark:text-blue-300 dark:hover:text-blue-400 font-semibold hover:underline cursor-pointer transition-colors">
+            <span className="cursor-pointer font-semibold text-blue-400 transition-colors hover:text-blue-500 hover:underline dark:text-blue-300 dark:hover:text-blue-400">
               Sign In
             </span>
           </>
         ) : (
           <>
             Don&apos;t have an account?{" "}
-            <span className="text-blue-400 hover:text-blue-500 dark:text-blue-300 dark:hover:text-blue-400 font-semibold hover:underline cursor-pointer transition-colors">
+            <span className="cursor-pointer font-semibold text-blue-400 transition-colors hover:text-blue-500 hover:underline dark:text-blue-300 dark:hover:text-blue-400">
               Create one
             </span>
           </>
         )}
       </button>
 
-      <div className="w-full flex items-center gap-3 my-6">
-        <div className="h-px bg-gray-200 dark:bg-gray-800 flex-1"></div>
-        <span className="text-[11px] text-gray-400 font-medium uppercase tracking-wider">
+      <div className="my-6 flex w-full items-center gap-3">
+        <div className="h-px flex-1 bg-gray-200 dark:bg-gray-800"></div>
+        <span className="text-[11px] font-medium tracking-wider text-gray-400 uppercase">
           or continue with
         </span>
-        <div className="h-px bg-gray-200 dark:bg-gray-800 flex-1"></div>
+        <div className="h-px flex-1 bg-gray-200 dark:bg-gray-800"></div>
       </div>
 
-      <div className="w-full grid grid-cols-2 gap-3">
+      <div className="grid w-full grid-cols-2 gap-3">
         <button
           type="button"
           onClick={() => handleOAuthLogin("google")}
           disabled={loading !== null}
-          className="group w-full flex items-center justify-center gap-2.5 px-3 py-2.5 bg-linear-to-b from-white to-[#f9fafb] dark:from-white/5 dark:to-white/[0.02] border-2 border-[#e5e7eb] dark:border-[#333] rounded-[8px] shadow-sm shadow-black/10 text-[13px] font-semibold text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-white/10 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-black/10 dark:focus:ring-white/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="group flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[8px] border-2 border-[#e5e7eb] bg-linear-to-b from-white to-[#f9fafb] px-3 py-2.5 text-[13px] font-semibold text-gray-700 shadow-sm shadow-black/10 transition-all hover:border-gray-300 hover:bg-gray-50 focus:ring-2 focus:ring-black/10 focus:outline-none active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 dark:border-[#333] dark:from-white/5 dark:to-white/[0.02] dark:text-gray-300 dark:hover:border-gray-600 dark:hover:bg-white/10 dark:focus:ring-white/10"
         >
           {loading === "google" ? (
-            <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
           ) : (
-            <svg className="w-4 h-4" viewBox="0 0 24 24">
+            <svg className="h-4 w-4" viewBox="0 0 24 24">
               <path
                 fill="#4285F4"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -266,12 +268,12 @@ export function LoginForm() {
           type="button"
           onClick={() => handleOAuthLogin("github")}
           disabled={loading !== null}
-          className="group w-full flex items-center justify-center gap-2.5 px-3 py-2.5 bg-linear-to-b from-[#1f1f1f] to-black dark:from-white dark:to-gray-200 border-2 border-[#e5e7eb] dark:border-[#333] hover:border-gray-300 dark:hover:border-gray-500 rounded-[8px] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] text-[13px] font-semibold text-white dark:text-black hover:from-black hover:to-black dark:hover:from-gray-100 dark:hover:to-white active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-black/10 dark:focus:ring-white/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="group flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[8px] border-2 border-[#e5e7eb] bg-linear-to-b from-[#1f1f1f] to-black px-3 py-2.5 text-[13px] font-semibold text-white shadow-[0_4px_6px_-1px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] transition-all hover:border-gray-300 hover:from-black hover:to-black focus:ring-2 focus:ring-black/10 focus:outline-none active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 dark:border-[#333] dark:from-white dark:to-gray-200 dark:text-black dark:hover:border-gray-500 dark:hover:from-gray-100 dark:hover:to-white dark:focus:ring-white/10"
         >
           {loading === "github" ? (
-            <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
           ) : (
-            <IconBrandGithub className="w-4 h-4 text-white dark:text-black" />
+            <IconBrandGithub className="h-4 w-4 text-white dark:text-black" />
           )}
           GitHub
         </button>
